@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { AddUserRequest, GetUserRequest, LoginRequest, SafeUser, User } from '../types/user.types';
-import { findFullUser, getUserByUsername, saveUser } from '../services/user.service';
+import { findFullUser, getUserByUsername, saveUser, toSafeUser } from '../services/user.service';
 import { PokeProjectSocket } from '../types/types';
 
 const userController = (socket: PokeProjectSocket) => {
@@ -95,11 +95,7 @@ const userController = (socket: PokeProjectSocket) => {
         return;
       }
 
-      const safeUser: SafeUser = {
-        _id: user._id,
-        username: user.username,
-        date_joined: user.date_joined,
-      };
+      const safeUser: SafeUser = toSafeUser(user);
 
       res.status(200).json(safeUser);
     } catch (error) {

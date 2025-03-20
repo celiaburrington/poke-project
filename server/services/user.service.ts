@@ -1,9 +1,23 @@
-import { UnsafeUserResponse, User, UserResponse } from '../types/user.types';
-import UserModel from '../model/user';
+import { SafeUser, UnsafeUserResponse, User, UserResponse } from '../types/user.types';
+import UserModel from '../models/user.model';
 
 // type checking utility for type-safe access to error code
 const isMongoError = (error: unknown): error is { code?: number } =>
   typeof error === 'object' && error !== null && 'code' in error;
+
+/**
+ * Util to convert a User object to a SafeUser by omitting the User's password.
+ *
+ * @param {User} user - The user to make safe
+ * @returns {SafeUser} - The safe user
+ */
+export const toSafeUser = (user: User): SafeUser => ({
+  _id: user._id,
+  username: user.username,
+  role: user.role,
+  date_joined: user.date_joined,
+  encounters: user.encounters,
+});
 
 /**
  * Saves a new user to the database.
@@ -19,11 +33,7 @@ export const saveUser = async (user: User): Promise<UserResponse> => {
       throw Error('Failed to create new user');
     }
 
-    return {
-      _id: result._id,
-      username: result.username,
-      date_joined: result.date_joined,
-    };
+    return toSafeUser(result);
   } catch (error) {
     if (isMongoError(error)) {
       if (error.code === 11000) {
