@@ -8,11 +8,3 @@ export type PokeProjectSocket = Server<ServerToClientEvents>;
 export interface ServerToClientEvents {
   example: (argument: string) => void;
 }
-
-/**
- * Type representing a Location where Pokémon can be encountered.
- */
-export type Location = {
-  id: number;
-  name: string;
-};
