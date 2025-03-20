@@ -2,25 +2,31 @@ import supertest from 'supertest';
 import mongoose from 'mongoose';
 import { app } from '../../app';
 import * as util from '../../services/user.service';
-import { SafeUser, User, UserResponse } from '../../types/user.types';
+import { SafeUser, User, UserResponse, UserRole } from '../../types/user.types';
 
 const mockUser: User = {
   _id: new mongoose.Types.ObjectId(),
   username: 'mockUser',
   password: 'qwerty123',
+  role: UserRole.NewUser,
   date_joined: new Date(),
+  encounters: [],
 };
 
 const mockSafeUser: SafeUser = {
   _id: mockUser._id,
-  username: 'mockUser',
-  date_joined: new Date(),
+  username: mockUser.username,
+  role: mockUser.role,
+  date_joined: mockUser.date_joined,
+  encounters: mockUser.encounters,
 };
 
 const mockUserJSONResponse = {
   _id: mockUser._id?.toString(),
   username: 'mockUser',
+  role: mockUser.role,
   date_joined: mockUser.date_joined.toISOString(),
+  encounters: mockUser.encounters,
 };
 
 const saveUserSpy = jest.spyOn(util, 'saveUser');

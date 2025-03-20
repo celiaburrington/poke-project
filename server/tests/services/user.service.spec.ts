@@ -1,5 +1,5 @@
-import UserModel from '../../model/user';
-import { findFullUser, getUserByUsername, saveUser } from '../../services/user.service';
+import UserModel from '../../models/user.model';
+import { findFullUser, getUserByUsername, saveUser, toSafeUser } from '../../services/user.service';
 import { SafeUser, User } from '../../types/user.types';
 import { user, safeUser } from '../mockData';
 
@@ -9,6 +9,13 @@ const mockingoose = require('mockingoose');
 describe('User model', () => {
   beforeEach(() => {
     mockingoose.resetAll();
+  });
+
+  describe('toSafeUser', () => {
+    it('should return the given user without the password field', () => {
+      const result = toSafeUser(user);
+      expect(result).toEqual(safeUser);
+    });
   });
 
   describe('saveUser', () => {
