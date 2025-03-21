@@ -62,7 +62,7 @@ function PokeProject({ socket }: { socket: PokeProjectSocket | null }) {
           }
         />
         <Route
-          path="/explore"
+          path="/explore/*"
           element={
             <ProtectedRoute
               user={user}

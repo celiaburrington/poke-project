@@ -1,27 +1,26 @@
-import { Button, Container } from "react-bootstrap";
-import { useNavigate } from "react-router";
+import { Route, Routes } from "react-router";
+import ExplorePage from "./Explore";
+import { ENCOUNTER_LISTS, LOCATIONS } from "./testLocations";
+import LocationPage from "./LocationPage";
 
 /**
  * Explore page allowing a User to navigate to a random Location.
  */
 export default function Explore() {
   // TODO: fetch locations from server
-  const tmpLocations = ["Forest", "Volcano", "Town", "Glacier"];
-  const navigate = useNavigate();
-
   return (
-    <Container id="pp-explore">
-      <h1>Explore the World of Pokémon!</h1>
-      <hr />
-      <Button
-        className="btn-primary"
-        onClick={() => {
-          const location = Math.floor(Math.random() * tmpLocations.length);
-          navigate(tmpLocations[location]);
-        }}
-      >
-        Go Explore!!
-      </Button>
-    </Container>
+    <Routes>
+      <Route path="/" element={<ExplorePage />} />
+      {LOCATIONS.map((loc, i) => (
+        <Route
+          path={loc.name.replace(/\s/g, "")}
+          element={
+            <LocationPage
+              location={{ ...loc, encounter_list: ENCOUNTER_LISTS[i] }}
+            />
+          }
+        />
+      ))}
+    </Routes>
   );
 }
