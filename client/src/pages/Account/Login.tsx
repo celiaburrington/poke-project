@@ -1,18 +1,19 @@
 import { ChangeEvent, useState } from "react";
 import { Button, Container, Form, FormControl } from "react-bootstrap";
-import useLoginContext from "../../hooks/useLoginContext";
 import { loginUser } from "../../services/userService";
 import { Link, useNavigate } from "react-router";
+import { useAppDispatch } from "../../hooks/useTypedRedux";
+import { setCurrentUser } from "../../store/reducers/account.reducer";
 
 /**
  * Login Component contains a form that allows the user to input their username and password,
- * which is then submitted to the application's context through the useLoginContext hook on success.
+ * which is then submitted to the application's Redux store through the AccountReducer on success.
  */
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [signupErr, setSignupErr] = useState<string>("");
-  const { setUser } = useLoginContext();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   /**
@@ -43,9 +44,9 @@ const Login = () => {
     try {
       const user = await loginUser({ username, password });
 
-      setUser(user);
+      dispatch(setCurrentUser(user));
 
-      navigate("/profile");
+      navigate("/Home");
     } catch (error) {
       // TODO: handle displaying login errors.
       setSignupErr(`Error logging in: ${(error as Error).message}`);
