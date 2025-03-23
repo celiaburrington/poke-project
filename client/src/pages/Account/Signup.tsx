@@ -1,8 +1,10 @@
 import { ChangeEvent, useState } from "react";
 import { Button, Container, Form, FormControl } from "react-bootstrap";
-import useLoginContext from "../../hooks/useLoginContext";
 import { addUser } from "../../services/userService";
 import { Link, useNavigate } from "react-router";
+import { useAppDispatch } from "../../hooks/useTypedRedux";
+import { UserRole } from "../../types/user.types";
+import { setCurrentUser } from "../../store/reducers/account.reducer";
 
 /**
  * Signup Component contains a form that allows the user to input a username and password to create a new account.
@@ -11,7 +13,7 @@ const Signup = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [signupErr, setSignupErr] = useState<string>("");
-  const { setUser } = useLoginContext();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   /**
@@ -43,10 +45,14 @@ const Signup = () => {
       const newUser = await addUser({
         username,
         password,
+        role: UserRole.NewUser,
         date_joined: new Date(),
+        encounters: [],
       });
-      setUser(newUser);
-      navigate("/profile");
+
+      dispatch(setCurrentUser(newUser));
+
+      navigate("/Profile");
     } catch (error) {
       if (
         typeof error === "object" &&

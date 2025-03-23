@@ -1,78 +1,56 @@
 import { Navigate, Route, Routes } from "react-router";
 import { JSX } from "react";
 import Home from "./Home";
-import { PokeProjectSocket } from "../types/types";
-import { SafeUser } from "../types/user.types";
-import UserContext from "../contexts/UserContext";
-import usePokeProject from "../hooks/usePokeProject";
-import LoginContext from "../contexts/LoginContext";
 import Login from "./Account/Login";
 import Profile from "./Account/Profile";
 import Search from "./Search";
 import Explore from "./Explore";
 import Signup from "./Account/Signup";
+import { useAppSelector } from "../hooks/useTypedRedux";
+import { Provider } from "react-redux";
+import store from "../store/store";
 
-const ProtectedRoute = ({
-  user,
-  socket,
-  children,
-}: {
-  user: SafeUser | null;
-  socket: PokeProjectSocket | null;
-  children: JSX.Element;
-}) => {
-  if (!user || !socket) {
-    return <Navigate to="/login" />;
+/**
+ * ProtectedRoute component accesses current user from Redux store. If currentUser is not null,
+ * returns the child components. Otherwise, navigates user to Login page.
+ */
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { currentUser } = useAppSelector((state) => state.accountReducer);
+
+  if (!currentUser) {
+    return <Navigate to="/Login" />;
   }
 
-  return (
-    <UserContext.Provider value={{ user, socket }}>
-      {children}
-    </UserContext.Provider>
-  );
+  return children;
 };
 
 /**
  * Represents the main component of the application.
  */
-function PokeProject({ socket }: { socket: PokeProjectSocket | null }) {
-  const { user, setUser } = usePokeProject();
-
+function PokeProject() {
   return (
-    <LoginContext.Provider value={{ setUser }}>
+    <Provider store={store}>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Navigate to="home" />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/profile/:uid" element={<h3>Profile Of Some User</h3>} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/details/:pid" element={<h3>Details for a Pokémon</h3>} />
+        <Route path="/" element={<Navigate to="Home" />} />
+        <Route path="/Home" element={<Home />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Signup" element={<Signup />} />
+        <Route path="/Profile/:uid" element={<h3>Profile Of Some User</h3>} />
+        <Route path="/Search" element={<Search />} />
+        <Route path="/Details/:pid" element={<h3>Details for a Pokémon</h3>} />
 
         {/* Protected Routes */}
         <Route
-          path="/profile"
-          element={
-            <ProtectedRoute
-              user={user}
-              socket={socket}
-              children={<Profile />}
-            />
-          }
+          path="/Profile"
+          element={<ProtectedRoute children={<Profile />} />}
         />
         <Route
-          path="/explore"
-          element={
-            <ProtectedRoute
-              user={user}
-              socket={socket}
-              children={<Explore />}
-            />
-          }
+          path="/Explore/*"
+          element={<ProtectedRoute children={<Explore />} />}
         />
       </Routes>
-    </LoginContext.Provider>
+    </Provider>
   );
 }
 

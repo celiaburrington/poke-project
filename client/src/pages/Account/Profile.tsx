@@ -1,21 +1,27 @@
 import { Container } from "react-bootstrap";
-import useUserContext from "../../hooks/useUserContext";
+import { useAppSelector } from "../../hooks/useTypedRedux";
 
 /**
  * Profile page component for the profile of the User that is currently logged in.
  */
 const Profile = () => {
-  const { user } = useUserContext();
+  const { currentUser } = useAppSelector((state) => state.accountReducer);
+
+  if (!currentUser) {
+    return (
+      <Container>Error fetching current user from application state.</Container>
+    );
+  }
 
   return (
     <Container id="pp-profile">
       <h3>Profile Page</h3>
       <hr />
-      {user._id}
+      {currentUser._id}
       <br />
-      {user.username}
+      {currentUser.username}
       <br />
-      {new Date(user.date_joined).toISOString()}
+      {new Date(currentUser.date_joined).toISOString()}
     </Container>
   );
 };
