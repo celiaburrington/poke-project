@@ -1,6 +1,19 @@
-import express, { Response } from 'express';
-import { AddUserRequest, GetUserRequest, LoginRequest, SafeUser, User } from '../types/user.types';
-import { findFullUser, getUserByUsername, saveUser, toSafeUser } from '../services/user.service';
+import express, { Request, Response } from 'express';
+import {
+  AddUserRequest,
+  GetUserRequest,
+  LoginRequest,
+  SafeUser,
+  UpdateUserRequest,
+  User,
+} from '../types/user.types';
+import {
+  findFullUser,
+  getUserByUsername,
+  saveUser,
+  toSafeUser,
+  updateUserDetails,
+} from '../services/user.service';
 import { PokeProjectSocket } from '../types/types';
 
 const userController = (socket: PokeProjectSocket) => {
@@ -77,7 +90,6 @@ const userController = (socket: PokeProjectSocket) => {
    *
    * @param req - The request object containing the user data.
    * @param res - The HTTP response object.
-   * @returns - The SafeUser object if the login is successful, otherwise an error message.
    */
   const loginUser = async (req: LoginRequest, res: Response): Promise<void> => {
     const { username, password } = req.body;
@@ -96,6 +108,7 @@ const userController = (socket: PokeProjectSocket) => {
       }
 
       const safeUser: SafeUser = toSafeUser(user);
+      req.session.currentUser = safeUser;
 
       res.status(200).json(safeUser);
     } catch (error) {
@@ -103,10 +116,81 @@ const userController = (socket: PokeProjectSocket) => {
     }
   };
 
+  /**
+   * Logs out an existing user by destroying the current session.
+   *
+   * @param req - The request object.
+   * @param res - The HTTP response object.
+   */
+  const logoutUser = async (req: Request, res: Response): Promise<void> => {
+    req.session.destroy(err => {
+      if (err) {
+        res.status(500).json({ message: 'Logout error' });
+      } else {
+        res.status(200).json({ message: 'Logged out' });
+      }
+    });
+  };
+
+  /**
+   * Fetches a SafeUser from the current session. Returns status 401 if session's currentUser not yet set.
+   *
+   * @param req - The request object.
+   * @param res - The HTTP response object.
+   * @returns - The SafeUser object if the login is successful, otherwise an error message.
+   */
+  const userProfile = async (req: Request, res: Response): Promise<void> => {
+    const { currentUser } = req.session;
+
+    if (!currentUser) {
+      res.status(401).send('Failed to fetch profile');
+      return;
+    }
+
+    res.status(200).json(currentUser);
+  };
+
+  /**
+   * Updates a User object in the database.
+   *
+   * @param req - The UpdateUserRequest object.
+   * @param res - The HTTP response object.
+   * @returns - The SafeUser object if the update is successful, otherwise an error message.
+   */
+  const updateUser = async (req: UpdateUserRequest, res: Response): Promise<void> => {
+    const { userId } = req.params;
+    const { userUpdates } = req.body;
+
+    try {
+      let updatedUser;
+      if (!userId) {
+        const { currentUser } = req.session;
+        if (!currentUser || !currentUser._id) {
+          throw Error();
+        }
+        updatedUser = await updateUserDetails(currentUser._id.toString(), userUpdates);
+      } else {
+        updatedUser = await updateUserDetails(userId, userUpdates);
+      }
+
+      if ('error' in updatedUser) {
+        throw Error();
+      }
+
+      req.session.currentUser = updatedUser;
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      res.status(500).send('Failed to update user');
+    }
+  };
+
   // Routes
   router.post('/addUser', addUser);
   router.get('/getUser/:username', getUser);
   router.post('/login', loginUser);
+  router.post('/logout', logoutUser);
+  router.post('/userProfile', userProfile);
+  router.put('/updateUser/:userId', updateUser);
 
   return router;
 };

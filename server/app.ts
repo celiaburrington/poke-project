@@ -3,6 +3,7 @@
 // the server will listen on .env.CLIENT_URL if set, otherwise 8000
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
+import session, { SessionOptions } from 'express-session';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { Server } from 'socket.io';
@@ -57,6 +58,23 @@ app.use(
     origin: [CLIENT_URL],
   }),
 );
+
+const sessionOptions: SessionOptions = {
+  secret: process.env.SESSION_SECRET || 'poke_project',
+  resave: false,
+  saveUninitialized: false,
+};
+
+if (process.env.NODE_ENV !== 'development') {
+  sessionOptions.proxy = true;
+  sessionOptions.cookie = {
+    sameSite: 'none',
+    secure: true,
+    domain: process.env.NODE_SERVER_DOMAIN,
+  };
+}
+
+app.use(session(sessionOptions));
 
 app.use(express.json());
 

@@ -1,4 +1,4 @@
-import { SafeUser, UnsafeUserResponse, User, UserResponse } from '../types/user.types';
+import { SafeUser, UnsafeUserResponse, User, UserResponse, UserUpdates } from '../types/user.types';
 import UserModel from '../models/user.model';
 
 // type checking utility for type-safe access to error code
@@ -17,6 +17,10 @@ export const toSafeUser = (user: User): SafeUser => ({
   role: user.role,
   date_joined: user.date_joined,
   encounters: user.encounters,
+  first_name: user.first_name,
+  last_name: user.last_name,
+  bio: user.bio,
+  email: user.email,
 });
 
 /**
@@ -66,6 +70,26 @@ export const getUserByUsername = async (username: string): Promise<UserResponse>
 };
 
 /**
+ * Retrieves a user from the database by their id.
+ *
+ * @param {string} userId - The id of the user to find.
+ * @returns {Promise<UserResponse>} - Resolves with the found user object (without the password) or an error message.
+ */
+export const getUserById = async (userId: string): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findById(userId).select('-password');
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    return user;
+  } catch (error) {
+    return { error: `Error occurred when finding user: ${error}` };
+  }
+};
+
+/**
  * Searches the database for a user with the given username. Returns full User or error message
  *
  * @param {string} username - The username of the user to find.
@@ -82,5 +106,33 @@ export const findFullUser = async (username: string): Promise<UnsafeUserResponse
     return user;
   } catch (error) {
     return { error: `Error occurred when finding user: ${error}` };
+  }
+};
+
+/**
+ * Updates the user given by _userId_ and returns the result. Error message if unable to update.
+ *
+ * @param {string} userId - The id the user to update.
+ * @param {UserUpdates} userUpdates - The fields to update.
+ * @returns {Promise<UnsafeUserResponse>} - Resolves to the updated SafeUser object or an error message.
+ */
+export const updateUserDetails = async (
+  userId: string,
+  userUpdates: UserUpdates,
+): Promise<UserResponse> => {
+  try {
+    if (!userUpdates) {
+      return await getUserById(userId);
+    }
+
+    const user = await UserModel.findOneAndUpdate({ _id: userId }, userUpdates, { new: true });
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    return toSafeUser(user);
+  } catch (error) {
+    return { error: `Error occurred when updating user: ${error}` };
   }
 };

@@ -1,4 +1,4 @@
-import { SafeUser, User } from "../types/user.types";
+import { SafeUser, User, UserUpdates } from "../types/user.types";
 import api from "./config";
 
 const USER_API_URL = `${import.meta.env.VITE_REMOTE_SERVER_URL}/user`;
@@ -43,4 +43,52 @@ const loginUser = async (credentials: {
   }
 };
 
-export { addUser, loginUser };
+/**
+ * Function to log out a user.
+ *
+ * @throws Error if there is an issue logging out the user.
+ */
+const logoutUser = async (): Promise<void> => {
+  const res = await api.post(`${USER_API_URL}/logout`);
+
+  if (res.status !== 200) {
+    throw new Error("Error logging out");
+  }
+};
+
+/**
+ * Function to fetch current users profile.
+ *
+ * @throws Error if there is an issue creating the new user.
+ */
+const userProfile = async (): Promise<SafeUser> => {
+  const res = await api.post(`${USER_API_URL}/userProfile`);
+
+  if (res.status !== 200) {
+    throw new Error("Error while creating a new user");
+  }
+
+  return res.data;
+};
+
+/**
+ * Function to fetch current users profile.
+ *
+ * @throws Error if there is an issue creating the new user.
+ */
+const updateCurrentUser = async (
+  userId: string,
+  userUpdates: UserUpdates
+): Promise<SafeUser> => {
+  const res = await api.put(`${USER_API_URL}/updateUser/${userId}`, {
+    userUpdates: userUpdates,
+  });
+
+  if (res.status !== 200) {
+    throw new Error("Error while creating a new user");
+  }
+
+  return res.data;
+};
+
+export { addUser, loginUser, logoutUser, userProfile, updateCurrentUser };

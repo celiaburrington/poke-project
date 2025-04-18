@@ -81,3 +81,38 @@ export interface GetUserRequest extends Request {
     username: string;
   };
 }
+
+/**
+ * Interface representing updates to a User document. All fields are optional.
+ *
+ * - `username`: new username.
+ * - `password`: new password.
+ * - `role`: new role.
+ * - `first_name`: first name update.
+ * - `last_name`: The user's last name.
+ * - `email`: The user's email.
+ * - `bio`: The user's profile bio.
+ */
+export interface UserUpdates {
+  username?: string;
+  password?: string;
+  role?: UserRole;
+  // Profile details
+  first_name?: string;
+  last_name?: string;
+  bio?: string;
+  email?: string;
+}
+
+/**
+ * Interface for the request body when updating a User in the database.
+ * - userUpdates - The updated SafeUser to save to the database.
+ */
+export interface UpdateUserRequest extends Request {
+  params: {
+    userId?: string;
+  };
+  body: {
+    userUpdates: UserUpdates;
+  };
+}

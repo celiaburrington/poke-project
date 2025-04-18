@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { Button, Container, Form, FormControl } from "react-bootstrap";
-import { loginUser } from "../../services/userService";
+import { loginUser, userProfile } from "../../services/userService";
 import { Link, useNavigate } from "react-router";
 import { useAppDispatch } from "../../hooks/useTypedRedux";
 import { setCurrentUser } from "../../store/reducers/account.reducer";
@@ -42,9 +42,10 @@ const Login = () => {
   const handleLogIn = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
-      const user = await loginUser({ username, password });
+      await loginUser({ username, password });
 
-      dispatch(setCurrentUser(user));
+      const profile = await userProfile();
+      dispatch(setCurrentUser(profile));
 
       navigate("/Home");
     } catch (error) {
@@ -78,7 +79,7 @@ const Login = () => {
       <Button className="btn-primary" onClick={handleLogIn}>
         Login
       </Button>
-      {signupErr && <div>{signupErr}</div>}
+      {signupErr && <div className="alert alert-danger">{signupErr}</div>}
       <br />
       No account yet? <Link to="/Signup">Signup</Link>
     </Container>

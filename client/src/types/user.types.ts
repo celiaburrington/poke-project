@@ -40,3 +40,25 @@ export interface User {
  * Type representing a User object with their password omitted for security.
  */
 export type SafeUser = Omit<User, "password">;
+
+/**
+ * Interface representing updates to a User document. All fields are optional.
+ *
+ * - `username`: new username.
+ * - `password`: new password.
+ * - `role`: new role.
+ * - `first_name`: first name update.
+ * - `last_name`: The user's last name.
+ * - `email`: The user's email.
+ * - `bio`: The user's profile bio.
+ */
+export interface UserUpdates {
+  username?: string;
+  password?: string;
+  role?: UserRole;
+  // Profile details
+  first_name?: string;
+  last_name?: string;
+  bio?: string;
+  email?: string;
+}

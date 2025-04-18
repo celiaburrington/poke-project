@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router } from "react-router";
+import { HashRouter } from "react-router";
 import { PokeProjectSocket } from "./types/types";
 import PokeProject from "./pages/PokeProject";
 import "./main.css";
@@ -30,8 +30,8 @@ export default function App() {
   }, [socket, serverURL]);
 
   return (
-    <Router>
+    <HashRouter>
       <PokeProject />
-    </Router>
+    </HashRouter>
   );
 }

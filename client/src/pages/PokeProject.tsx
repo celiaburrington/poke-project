@@ -9,16 +9,24 @@ import Signup from "./Account/Signup";
 import { useAppSelector } from "../hooks/useTypedRedux";
 import { Provider } from "react-redux";
 import store from "../store/store";
+import Session from "./Account/components/Session";
 
 /**
  * ProtectedRoute component accesses current user from Redux store. If currentUser is not null,
- * returns the child components. Otherwise, navigates user to Login page.
+ * returns the child components. Otherwise, navigates user to page given by _redirect_.
  */
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+const ProtectedRoute = ({
+  children,
+  redirect,
+}: {
+  children: JSX.Element;
+  redirect: string;
+}) => {
   const { currentUser } = useAppSelector((state) => state.accountReducer);
 
+  console.log(currentUser);
   if (!currentUser) {
-    return <Navigate to="/Login" />;
+    return <Navigate to={`/${redirect}`} />;
   }
 
   return children;
@@ -30,26 +38,32 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 function PokeProject() {
   return (
     <Provider store={store}>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Navigate to="Home" />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Signup" element={<Signup />} />
-        <Route path="/Profile/:uid" element={<h3>Profile Of Some User</h3>} />
-        <Route path="/Search" element={<Search />} />
-        <Route path="/Details/:pid" element={<h3>Details for a Pokémon</h3>} />
+      <div className="mb-3"></div>
+      <Session>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="Home" />} />
+          <Route path="/Home" element={<Home />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Signup" element={<Signup />} />
+          <Route path="/Profile/:uid" element={<h3>Profile Of Some User</h3>} />
+          <Route path="/Search" element={<Search />} />
+          <Route
+            path="/Details/:pid"
+            element={<h3>Details for a Pokémon</h3>}
+          />
 
-        {/* Protected Routes */}
-        <Route
-          path="/Profile"
-          element={<ProtectedRoute children={<Profile />} />}
-        />
-        <Route
-          path="/Explore/*"
-          element={<ProtectedRoute children={<Explore />} />}
-        />
-      </Routes>
+          {/* Protected Routes */}
+          <Route
+            path="/Profile"
+            element={<ProtectedRoute redirect="Home" children={<Profile />} />}
+          />
+          <Route
+            path="/Explore/*"
+            element={<ProtectedRoute redirect="Login" children={<Explore />} />}
+          />
+        </Routes>
+      </Session>
     </Provider>
   );
 }
