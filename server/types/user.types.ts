@@ -83,6 +83,16 @@ export interface GetUserRequest extends Request {
 }
 
 /**
+ * Interface for the request body when retrieving a user by their id.
+ * - uid - The ID of the user to retrieve.
+ */
+export interface GetUserByIdRequest extends Request {
+  params: {
+    uid: string;
+  };
+}
+
+/**
  * Interface representing updates to a User document. All fields are optional.
  *
  * - `username`: new username.

@@ -8,7 +8,9 @@ import Pokedex from "./Pokedex";
 export default function Search() {
   return (
     <Container>
-      <h3>Search for a Pokémon</h3>
+      <h3>
+        <a href="#">Home</a> / Search for a Pokémon
+      </h3>
       <hr />
       <FormControl
         type="text"

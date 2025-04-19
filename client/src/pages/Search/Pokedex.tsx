@@ -70,6 +70,7 @@ export default function Pokedex() {
       setMons(dexIDs.slice(newOffset, newOffset + monsPerPage));
       checkDisableNext(newOffset, monsPerPage);
       checkDisablePrev(newOffset, monsPerPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -83,6 +84,7 @@ export default function Pokedex() {
       setMons(dexIDs.slice(newOffset, newOffset + monsPerPage));
       checkDisableNext(newOffset, monsPerPage);
       checkDisablePrev(newOffset, monsPerPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -136,6 +138,7 @@ export default function Pokedex() {
       >
         Next
       </Button>
+      <br />
       <br />
     </Container>
   );

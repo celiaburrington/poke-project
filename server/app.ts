@@ -10,6 +10,7 @@ import { Server } from 'socket.io';
 import * as http from 'http';
 
 import userController from './controllers/user.controller';
+import locationController from './controllers/location.controller';
 import { PokeProjectSocket } from './types/types';
 
 dotenv.config();
@@ -84,6 +85,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/user', userController(socket));
+app.use('/location', locationController(socket));
 
 // Export the app instance
 export { app, server, startServer };

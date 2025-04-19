@@ -18,12 +18,14 @@ export default function EditProfile({
       <Form>
         <FormControl
           defaultValue={profile.username}
+          placeholder="Unique username"
           id="pp-username"
           className="mb-2 w-50"
           onChange={(e) => setUpdates({ ...updates, username: e.target.value })}
         />
         <FormControl
           as="textarea"
+          placeholder="Profile bio..."
           rows={3}
           defaultValue={profile.bio}
           id="pp-bio"
@@ -32,6 +34,7 @@ export default function EditProfile({
         />
         <FormControl
           defaultValue={profile.first_name}
+          placeholder="First name"
           id="pp-firstname"
           className="mb-2 w-50"
           onChange={(e) =>
@@ -41,6 +44,7 @@ export default function EditProfile({
         <FormControl
           defaultValue={profile.last_name}
           id="pp-lastname"
+          placeholder="Last name"
           className="mb-2 w-50"
           onChange={(e) =>
             setUpdates({ ...updates, last_name: e.target.value })
@@ -49,6 +53,7 @@ export default function EditProfile({
         <FormControl
           defaultValue={profile.email}
           id="pp-email"
+          placeholder="example@mail.com"
           className="mb-2 w-50"
           onChange={(e) => setUpdates({ ...updates, email: e.target.value })}
         />
@@ -71,8 +76,8 @@ export default function EditProfile({
           </FormSelect>
         )}
       </Form>
-      <Button className="btn-primary me-2" onClick={() => saveProfile()}>
-        <BiSave className="mb-1 me-1 fs-5" />
+      <Button className="btn-primary me-2 mt-2" onClick={() => saveProfile()}>
+        <BiSave className="mb-1 me-1" />
         Save
       </Button>
     </>

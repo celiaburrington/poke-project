@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { ObjectId } from 'mongodb';
 import { Pokemon } from './pokemon.types';
 
@@ -54,4 +55,12 @@ export interface Location {
   name: LocationName;
   description: string;
   encounter_list: Pokemon[];
+}
+
+export type LocationResponse = Location | { error: string };
+
+export interface GetLocationRequest extends Request {
+  params: {
+    locationId: string;
+  };
 }

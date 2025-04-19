@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import {
   AddUserRequest,
+  GetUserByIdRequest,
   GetUserRequest,
   LoginRequest,
   SafeUser,
@@ -9,6 +10,7 @@ import {
 } from '../types/user.types';
 import {
   findFullUser,
+  getUserById,
   getUserByUsername,
   saveUser,
   toSafeUser,
@@ -74,6 +76,31 @@ const userController = (socket: PokeProjectSocket) => {
 
     try {
       const userFromDb = await getUserByUsername(username);
+
+      if ('error' in userFromDb) {
+        throw new Error(userFromDb.error as string);
+      }
+
+      res.json(userFromDb);
+    } catch (err) {
+      res.status(500).send(`${(err as Error).message}`);
+    }
+  };
+
+  /**
+   * Fetches a User from the database by their ID.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param req The GetUserRequest object containing the user's ID.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const getUserWithId = async (req: GetUserByIdRequest, res: Response): Promise<void> => {
+    const { uid } = req.params;
+
+    try {
+      const userFromDb = await getUserById(uid);
 
       if ('error' in userFromDb) {
         throw new Error(userFromDb.error as string);
@@ -187,6 +214,7 @@ const userController = (socket: PokeProjectSocket) => {
   // Routes
   router.post('/addUser', addUser);
   router.get('/getUser/:username', getUser);
+  router.get('/getUserWithId/:uid', getUserWithId);
   router.post('/login', loginUser);
   router.post('/logout', logoutUser);
   router.post('/userProfile', userProfile);

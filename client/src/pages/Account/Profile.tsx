@@ -1,4 +1,4 @@
-import { Button, Container } from "react-bootstrap";
+import { Button, Card, Container } from "react-bootstrap";
 import { useAppSelector } from "../../hooks/useTypedRedux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -82,25 +82,34 @@ const Profile = () => {
       <br />
       <br />
       <hr />
-      {profile && !editting && <ProfileDetails profile={profile} />}
-      {profile && editting && (
-        <EditProfile
-          profile={profile}
-          updates={updates}
-          setUpdates={setUpdates}
-          saveProfile={saveProfile}
-        />
-      )}
-      <Button
-        className={`${!editting ? "btn-primary" : "btn-secondary"}`}
-        onClick={() => {
-          setEditting(!editting);
-          setUpdates({});
-        }}
-      >
-        {!editting && <BiSolidEdit className="mb-1 me-2 fs-5" />}
-        {editting ? "Cancel" : "Edit"}
-      </Button>
+      <Card className="pp-profile-details bg-light">
+        <Card.Header>User Details</Card.Header>
+        <Card.Body>
+          {profile && !editting && (
+            <ProfileDetails profile={profile} isPublic={false} />
+          )}
+          {profile && editting && (
+            <EditProfile
+              profile={profile}
+              updates={updates}
+              setUpdates={setUpdates}
+              saveProfile={saveProfile}
+            />
+          )}
+          <Button
+            className={`${
+              !editting ? "btn-primary mt-3" : "btn-secondary mt-2"
+            }`}
+            onClick={() => {
+              setEditting(!editting);
+              setUpdates({});
+            }}
+          >
+            {!editting && <BiSolidEdit className="mb-1 me-2 fs-5" />}
+            {editting ? "Cancel" : "Edit"}
+          </Button>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };

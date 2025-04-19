@@ -59,22 +59,22 @@ const logoutUser = async (): Promise<void> => {
 /**
  * Function to fetch current users profile.
  *
- * @throws Error if there is an issue creating the new user.
+ * @throws Error if there is an issue fetching.
  */
 const userProfile = async (): Promise<SafeUser> => {
   const res = await api.post(`${USER_API_URL}/userProfile`);
 
   if (res.status !== 200) {
-    throw new Error("Error while creating a new user");
+    throw new Error("Error while fetching current user's profile");
   }
 
   return res.data;
 };
 
 /**
- * Function to fetch current users profile.
+ * Function to update a user's profile.
  *
- * @throws Error if there is an issue creating the new user.
+ * @throws Error if there is an issue updating.
  */
 const updateCurrentUser = async (
   userId: string,
@@ -85,10 +85,32 @@ const updateCurrentUser = async (
   });
 
   if (res.status !== 200) {
-    throw new Error("Error while creating a new user");
+    throw new Error("Error while updating user");
   }
 
   return res.data;
 };
 
-export { addUser, loginUser, logoutUser, userProfile, updateCurrentUser };
+/**
+ * Function to fetch a user by an ID.
+ *
+ * @throws Error if there is an issue finding user.
+ */
+const getUserById = async (uid: string): Promise<SafeUser> => {
+  const res = await api.get(`${USER_API_URL}/getUserWithId/${uid}`);
+
+  if (res.status !== 200) {
+    throw new Error("Error while fetching user");
+  }
+
+  return res.data;
+};
+
+export {
+  addUser,
+  loginUser,
+  logoutUser,
+  userProfile,
+  updateCurrentUser,
+  getUserById,
+};
