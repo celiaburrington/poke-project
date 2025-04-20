@@ -49,8 +49,20 @@ const Login = () => {
 
       navigate("/Home");
     } catch (error) {
-      // TODO: handle displaying login errors.
-      setSignupErr(`Error logging in: ${(error as Error).message}`);
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "data" in error.response &&
+        typeof error.response.data === "string"
+      ) {
+        // get response to display unique username error message
+        setSignupErr(error.response.data);
+      } else {
+        setSignupErr("Error signing up");
+      }
     }
   };
 

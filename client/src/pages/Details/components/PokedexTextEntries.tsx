@@ -12,8 +12,8 @@ export default function PokedexTextEntries({
       <dl className="row">
         {details.flavor_text_entries.map((e) => (
           <>
-            <dt className="col-sm-1 mt-3 ms-3">{e.version}</dt>
-            <dd className="col-sm-10 mt-3 mb-2">{e.flavor_text}</dd>
+            <dt className="col-sm-2 mt-3 ms-3">{e.version}</dt>
+            <dd className="col-sm-9 mt-3 mb-2">{e.flavor_text}</dd>
           </>
         ))}
       </dl>

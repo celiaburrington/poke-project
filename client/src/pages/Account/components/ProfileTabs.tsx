@@ -34,6 +34,9 @@ export default function ProfileTabs({
       {tab && (
         <div className="mt-3">
           <h5>Most Recent Encounters</h5>
+          {encounters.length === 0 && (
+            <div className="alert alert-warning">No recent encounters....</div>
+          )}
           {encounters.map((e, idx) => (
             <EncounterLog key={idx} encounter={e} />
           ))}

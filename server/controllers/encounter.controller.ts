@@ -4,9 +4,13 @@ import {
   fetchRecentEncounters,
   getRecentPokemonEncounters,
   getUserEncountersWithPokemon,
+  saveEncounter,
 } from '../services/encounter.service';
 import {
+  AddEncounterRequest,
+  Encounter,
   EncountersByPokemonRequest,
+  RandomEncounterRequest,
   UsersEncountersByPokemonRequest,
 } from '../types/encounter.types';
 
@@ -114,10 +118,81 @@ const encounterController = (socket: PokeProjectSocket) => {
     }
   };
 
+  const isEncounterValid = (body: Encounter) => !!body.user && !!body.pokemon;
+
+  /**
+   * Adds a new encounter to the database. The add encounter request is validated then saved.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param req The AddEncounterRequest object containing the encounter data.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const addEncounter = async (req: AddEncounterRequest, res: Response): Promise<void> => {
+    if (!isEncounterValid(req.body)) {
+      res.status(400).send('Invalid user');
+      return;
+    }
+
+    const encounterInfo = req.body;
+
+    try {
+      const encounterFromDb = await saveEncounter(encounterInfo);
+
+      if ('error' in encounterFromDb) {
+        throw new Error(encounterFromDb.error as string);
+      }
+
+      res.json(encounterFromDb);
+    } catch (err) {
+      res.status(500).send(`${(err as Error).message}`);
+    }
+  };
+
+  /**
+   * Adds a random encounter from the location sent in the request to the current user.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param req The RandomEncounterRequest object containing the location data.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const randomEncounter = async (req: RandomEncounterRequest, res: Response): Promise<void> => {
+    const locationInfo = req.body;
+    const randEncounter = Math.floor(Math.random() * locationInfo.encounter_list.length);
+    const { currentUser } = req.session;
+    if (!currentUser) {
+      throw Error('Invalid session for this operation');
+    }
+
+    const newEncounter: Encounter = {
+      user: currentUser,
+      pokemon: locationInfo.encounter_list[randEncounter],
+      location: locationInfo,
+      encountered_at: new Date(),
+    };
+
+    try {
+      const encounterFromDb = await saveEncounter(newEncounter);
+
+      if ('error' in encounterFromDb) {
+        throw new Error(encounterFromDb.error as string);
+      }
+
+      res.json(encounterFromDb);
+    } catch (err) {
+      res.status(500).send(`${(err as Error).message}`);
+    }
+  };
+
   // Routes
   router.get('/fetchEncounters', fetchEncounters);
   router.get('/fetchPokemonEncounters/:pid', fetchPokemonEncounters);
   router.get('/getUsersPokemonEncounters/:uid/:pid', getUserPokemonEncounters);
+  router.post('/addEncounter', addEncounter);
+  router.post('/randomEncounter', randomEncounter);
 
   return router;
 };

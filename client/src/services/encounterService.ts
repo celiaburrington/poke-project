@@ -1,4 +1,5 @@
 import { Encounter } from "../types/encounter.types";
+import { Location } from "../types/location.types";
 import api from "./config";
 
 const ENCOUNTER_API_URL = `${import.meta.env.VITE_REMOTE_SERVER_URL}/encounter`;
@@ -58,8 +59,30 @@ const getUsersPokemonEncounters = async (
   return res.data;
 };
 
+const addEncounter = async (encounter: Encounter): Promise<Encounter> => {
+  const res = await api.post(`${ENCOUNTER_API_URL}/addEncounter`, encounter);
+
+  if (res.status !== 200) {
+    throw new Error("Error adding encounter");
+  }
+
+  return res.data;
+};
+
+const randomEncounter = async (location: Location): Promise<Encounter> => {
+  const res = await api.post(`${ENCOUNTER_API_URL}/randomEncounter`, location);
+
+  if (res.status !== 200) {
+    throw new Error("Error adding encounter");
+  }
+
+  return res.data;
+};
+
 export {
   fetchEncounters,
   getRecentPokemonEncounters,
   getUsersPokemonEncounters,
+  addEncounter,
+  randomEncounter,
 };

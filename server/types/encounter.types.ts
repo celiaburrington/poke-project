@@ -38,3 +38,11 @@ export interface UsersEncountersByPokemonRequest extends Request {
     pid: string;
   };
 }
+
+export interface AddEncounterRequest extends Request {
+  body: Encounter;
+}
+
+export interface RandomEncounterRequest extends Request {
+  body: Location;
+}

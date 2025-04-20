@@ -92,8 +92,8 @@ const Signup = () => {
         />
       </Form>
       <br />
-      <Button className="btn-primary" onClick={handleSignUp}>
-        Login
+      <Button className="btn-primary mb-2" onClick={handleSignUp}>
+        Signup
       </Button>
       {signupErr && <div className="alert alert-danger mb-2">{signupErr}</div>}
       {!signupErr && <br />}
