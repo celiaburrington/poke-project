@@ -7,6 +7,8 @@ import ProfileDetails from "./components/ProfileDetails";
 import { FaRegUser } from "react-icons/fa6";
 import { Encounter } from "../../types/encounter.types";
 import ProfileTabs from "./components/ProfileTabs";
+import { Pokemon } from "../../types/pokemon.types";
+import { getUsersFavorites } from "../../services/favoriteService";
 
 /**
  * Public Profile page component displaying the public details of a User's profile page.
@@ -15,8 +17,12 @@ const PublicProfile = () => {
   const { uid } = useParams();
   const [user, setUser] = useState<SafeUser>();
   const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [favorites, setFavorites] = useState<Pokemon[]>([]);
 
   useEffect(() => {
+    /**
+     * Function to fetch the current user's profile data.
+     */
     const fetchUserDetails = async () => {
       if (!uid) {
         return;
@@ -25,14 +31,12 @@ const PublicProfile = () => {
         const userFromDb = await getUserById(uid);
         setUser(userFromDb);
         fetchEncouters();
+        fetchFavorites();
       } catch (error) {
         console.log(error);
       }
     };
 
-    /**
-     * Function to fetch the current user's profile data.
-     */
     const fetchEncouters = async () => {
       try {
         if (!user?._id) {
@@ -41,6 +45,19 @@ const PublicProfile = () => {
         }
         const result = await getUsersEncounters(user._id);
         setEncounters(result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchFavorites = async () => {
+      try {
+        if (!user?._id) {
+          setFavorites([]);
+          return;
+        }
+        const result = await getUsersFavorites(user._id);
+        setFavorites(result);
       } catch (error) {
         console.log(error);
       }
@@ -66,7 +83,7 @@ const PublicProfile = () => {
             </Card.Body>
           </Card>
           <br />
-          <ProfileTabs encounters={encounters} />
+          <ProfileTabs encounters={encounters} favorites={favorites} />
         </>
       )}
       {!user && (

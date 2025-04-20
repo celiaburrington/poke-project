@@ -23,19 +23,6 @@ export default function LocationPage({
   const [areaEncounter, setAreaEncounter] = useState<Encounter | null>(null);
   const locationURL = useLocation();
 
-  /**
-   * Function to return the URL for a Pokémon's sprite image base on the Pokémon's API ID.
-   *
-   * @param api_id pokémon id
-   * @param shiny shiny sprite?
-   * @returns The sprite URL
-   */
-  const getSpriteURL = (api_id: number, shiny = false) => {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon${
-      shiny ? "/shiny" : ""
-    }/${api_id}.png`;
-  };
-
   const getRandomEncounter = async () => {
     try {
       const rand = await randomEncounter(location);
@@ -67,13 +54,9 @@ export default function LocationPage({
       <h3 className="mt-2">{location.name}</h3>
       {location.description}
       <hr />
-      {!areaEncounter && <EncounterCard sprite={getSpriteURL(0)} key={0} />}
+      {!areaEncounter && <EncounterCard key={0} />}
       {areaEncounter && (
-        <EncounterCard
-          key={0}
-          pokemon={areaEncounter.pokemon}
-          sprite={getSpriteURL(areaEncounter.pokemon.api_id)}
-        />
+        <EncounterCard key={0} pokemon={areaEncounter.pokemon} />
       )}
       <br />
       {!disabled && (
@@ -97,12 +80,7 @@ export default function LocationPage({
       <Link to="/Home">
         <Button className="btn-danger">Return Home</Button>
       </Link>
-      {isAdmin && (
-        <AdminEncounterList
-          pokemon={location.encounter_list}
-          getSprite={getSpriteURL}
-        />
-      )}
+      {isAdmin && <AdminEncounterList pokemon={location.encounter_list} />}
     </Container>
   );
 }

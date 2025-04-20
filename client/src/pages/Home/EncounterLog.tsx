@@ -18,12 +18,7 @@ export default function EncounterLog({
   };
 
   if (type === "card") {
-    return (
-      <EncounterCard
-        pokemon={encounter.pokemon}
-        sprite={getSpriteURL(encounter.pokemon.api_id)}
-      />
-    );
+    return <EncounterCard pokemon={encounter.pokemon} />;
   } else if (type === "private") {
     return (
       <>

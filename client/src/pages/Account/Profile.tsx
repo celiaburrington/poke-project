@@ -17,6 +17,8 @@ import { BiSolidEdit } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
 import ProfileTabs from "./components/ProfileTabs";
 import { Encounter } from "../../types/encounter.types";
+import { getUsersFavorites } from "../../services/favoriteService";
+import { Pokemon } from "../../types/pokemon.types";
 
 /**
  * Profile page component for the profile of the User that is currently logged in.
@@ -26,6 +28,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<SafeUser>();
   const [updates, setUpdates] = useState<UserUpdates>({});
   const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [favorites, setFavorites] = useState<Pokemon[]>([]);
   const [editting, setEditting] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -84,8 +87,22 @@ const Profile = () => {
       }
     };
 
+    const fetchFavorites = async () => {
+      try {
+        if (!currentUser?._id) {
+          setFavorites([]);
+          return;
+        }
+        const result = await getUsersFavorites(currentUser._id);
+        setFavorites(result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchProfile();
     fetchEncouters();
+    fetchFavorites();
   }, [currentUser, navigate]);
 
   // Profile
@@ -135,7 +152,7 @@ const Profile = () => {
         </Card.Body>
       </Card>
       <br />
-      <ProfileTabs encounters={encounters} />
+      <ProfileTabs encounters={encounters} favorites={favorites} />
     </Container>
   );
 };

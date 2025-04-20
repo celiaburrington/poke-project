@@ -46,7 +46,7 @@ export default function DetailsPage({
               ))}
               <br />
               <br />
-              <Card border="danger">
+              <Card border="danger" bg="light">
                 {currentUser && (
                   <Card.Body>
                     You've encountered this Pokémon {userEncounters.length}{" "}

@@ -14,6 +14,7 @@ import userController from './controllers/user.controller';
 import locationController from './controllers/location.controller';
 import encounterController from './controllers/encounter.controller';
 import pokemonController from './controllers/pokemon.controller';
+import favoriteController from './controllers/favorite.controller';
 
 dotenv.config();
 
@@ -90,6 +91,7 @@ app.use('/user', userController(socket));
 app.use('/location', locationController(socket));
 app.use('/encounter', encounterController(socket));
 app.use('/pokemon', pokemonController(socket));
+app.use('/favorite', favoriteController(socket));
 
 // Export the app instance
 export { app, server, startServer };

@@ -6,10 +6,16 @@ import {
   getRecentPokemonEncounters,
   getUsersPokemonEncounters,
 } from "../../services/encounterService";
-import { PokemonDetails } from "../../types/pokemon.types";
+import { Pokemon, PokemonDetails } from "../../types/pokemon.types";
 import getPokemonDetails from "../../services/pokemonService";
 import DetailsPage from "./DetailsPage";
 import { useAppSelector } from "../../hooks/useTypedRedux";
+import {
+  addFavorite,
+  deleteFavorite,
+  getUsersFavorites,
+} from "../../services/favoriteService";
+import { Favorite } from "../../types/favorite.types";
 
 export default function Details() {
   const { pid } = useParams();
@@ -17,6 +23,7 @@ export default function Details() {
   const location = useLocation();
   const fromPage: string = location.state?.from?.pathname ?? "/Home";
   const { currentUser } = useAppSelector((state) => state.accountReducer);
+  const [isFav, setIsFav] = useState<boolean>(false);
 
   const [details, setDetails] = useState<PokemonDetails>();
   const [usersEncounters, setUserEncounters] = useState<Encounter[]>([]);
@@ -45,6 +52,40 @@ export default function Details() {
           {fromPage.includes("Search") ? "Back to Search" : "Return Home"}
         </Button>
       );
+    }
+  };
+
+  /**
+   * Function to handle toggling the current pokemon as one of user's favorites
+   */
+  const handleFavoritesToggle = async () => {
+    if (!currentUser) {
+      navigate("/Login");
+      return;
+    }
+    if (!isFav && details) {
+      const pokemon: Pokemon = {
+        _id: details._id,
+        api_id: details.api_id,
+        name: details.name,
+      };
+      const fav: Favorite = {
+        user: currentUser,
+        pokemon,
+      };
+      try {
+        await addFavorite(fav);
+        setIsFav(true);
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (isFav && details?._id && currentUser._id) {
+      try {
+        await deleteFavorite(currentUser._id, details._id);
+        setIsFav(false);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -83,7 +124,7 @@ export default function Details() {
     };
 
     /**
-     * Fetch recent encounters for by the current User for this Pokemon
+     * Fetch encounters by the current User for this Pokemon
      */
     const fetchUsersEncounters = async () => {
       try {
@@ -102,13 +143,37 @@ export default function Details() {
       }
     };
 
+    /**
+     * Fetch the current Users favorites to determine if pokemon is favorited by current user
+     */
+    const isUsersFavorite = async () => {
+      try {
+        if (!pid || !currentUser?._id) {
+          setIsFav(false);
+          return;
+        }
+
+        const favs = await getUsersFavorites(currentUser._id);
+        setIsFav(!!favs.find((p) => p.api_id === parseInt(pid)));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchDetails();
     fetchPokemonEncounters();
+    isUsersFavorite();
   }, [currentUser?._id, details?._id, pid]);
+
   return (
     <Container className="pp-details-page">
       {getBackButton()}
-      <Button className="btn-primary float-end me-2">Add to Favorites</Button>
+      <Button
+        className={`btn-${isFav ? "warning" : "primary"} float-end me-2`}
+        onClick={handleFavoritesToggle}
+      >
+        {isFav ? "Remove from Favorites" : "Add to Favorites"}
+      </Button>
       <h1>{details?.formatedName}</h1>
       <hr />
       {details && (
