@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import {
   AddUserRequest,
   GetUserByIdRequest,
+  GetUserEncountersRequest,
   GetUserRequest,
   LoginRequest,
   SafeUser,
@@ -17,6 +18,7 @@ import {
   updateUserDetails,
 } from '../services/user.service';
 import { PokeProjectSocket } from '../types/types';
+import { getUserAllEncounters } from '../services/encounter.service';
 
 const userController = (socket: PokeProjectSocket) => {
   const router = express.Router();
@@ -211,6 +213,38 @@ const userController = (socket: PokeProjectSocket) => {
     }
   };
 
+  /**
+   * Fetches a User's Encounters from the database with the encounter entries populated.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param req The GetUserEncountersRequest object.
+   * @param res The response object used to send back the result.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const getUserEncounters = async (req: GetUserEncountersRequest, res: Response): Promise<void> => {
+    const { uid } = req.params;
+
+    try {
+      const encounterResponse = await getUserAllEncounters(uid);
+
+      if ('error' in encounterResponse) {
+        throw new Error(encounterResponse.error as string);
+      }
+
+      const encounters = encounterResponse.map(e => {
+        if ('error' in e) {
+          throw new Error(e.error);
+        }
+        return e;
+      });
+
+      res.json(encounters);
+    } catch (err) {
+      res.status(500).send(`${(err as Error).message}`);
+    }
+  };
+
   // Routes
   router.post('/addUser', addUser);
   router.get('/getUser/:username', getUser);
@@ -219,6 +253,7 @@ const userController = (socket: PokeProjectSocket) => {
   router.post('/logout', logoutUser);
   router.post('/userProfile', userProfile);
   router.put('/updateUser/:userId', updateUser);
+  router.get('/getUserEncounters/:uid', getUserEncounters);
 
   return router;
 };

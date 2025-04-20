@@ -1,5 +1,3 @@
-import { Encounter } from "./encounter.types";
-
 /**
  * UserRole enum enumerating user roles.
  */
@@ -16,7 +14,6 @@ export enum UserRole {
  * - `password`: The user's password.
  * - `date_joined`: The date the user signed up.
  * - `role`: The user's role.
- * - `encounters`: A list of the pokemon encounters the user has had.
  * - `first_name`: The user's first name. (Optional)
  * - `last_name`: The user's last name. (Optional)
  * - `email`: The user's email. (Optional)
@@ -28,7 +25,6 @@ export interface User {
   password: string;
   date_joined: Date;
   role: UserRole;
-  encounters: Encounter[];
   // Profile details
   first_name?: string;
   last_name?: string;

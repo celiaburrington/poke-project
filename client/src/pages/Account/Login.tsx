@@ -76,11 +76,11 @@ const Login = () => {
         />
       </Form>
       <br />
-      <Button className="btn-primary" onClick={handleLogIn}>
+      <Button className="btn-primary mb-2" onClick={handleLogIn}>
         Login
       </Button>
-      {signupErr && <div className="alert alert-danger">{signupErr}</div>}
-      <br />
+      {signupErr && <div className="alert alert-danger mb-2">{signupErr}</div>}
+      {!signupErr && <br />}
       No account yet? <Link to="/Signup">Signup</Link>
     </Container>
   );

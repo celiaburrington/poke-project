@@ -10,7 +10,6 @@ const mockUser: User = {
   password: 'qwerty123',
   role: UserRole.NewUser,
   date_joined: new Date(),
-  encounters: [],
 };
 
 const mockSafeUser: SafeUser = {
@@ -18,7 +17,6 @@ const mockSafeUser: SafeUser = {
   username: mockUser.username,
   role: mockUser.role,
   date_joined: mockUser.date_joined,
-  encounters: mockUser.encounters,
 };
 
 const mockUserJSONResponse = {
@@ -26,7 +24,6 @@ const mockUserJSONResponse = {
   username: 'mockUser',
   role: mockUser.role,
   date_joined: mockUser.date_joined.toISOString(),
-  encounters: mockUser.encounters,
 };
 
 const saveUserSpy = jest.spyOn(util, 'saveUser');

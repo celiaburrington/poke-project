@@ -29,13 +29,13 @@ const ProfileDetails = ({
 
       {!isPublic && (
         <>
-          <dt className="col-sm-3">Email</dt>
-          <dd className="col-sm-9">{profile.email}</dd>
+          <dt className="col-sm-3 mb-3">Email</dt>
+          <dd className="col-sm-9 mb-3">{profile.email}</dd>
         </>
       )}
 
-      <dt className="col-sm-3 mt-3">Date Joined</dt>
-      <dd className="col-sm-9 mt-3">
+      <dt className="col-sm-3">Date Joined</dt>
+      <dd className="col-sm-9">
         {new Date(profile.date_joined).toLocaleDateString()}
       </dd>
     </dl>

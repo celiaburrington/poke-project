@@ -16,7 +16,6 @@ export const toSafeUser = (user: User): SafeUser => ({
   username: user.username,
   role: user.role,
   date_joined: user.date_joined,
-  encounters: user.encounters,
   first_name: user.first_name,
   last_name: user.last_name,
   bio: user.bio,

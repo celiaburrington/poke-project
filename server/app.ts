@@ -9,9 +9,11 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 import * as http from 'http';
 
+import { PokeProjectSocket } from './types/types';
 import userController from './controllers/user.controller';
 import locationController from './controllers/location.controller';
-import { PokeProjectSocket } from './types/types';
+import encounterController from './controllers/encounter.controller';
+import pokemonController from './controllers/pokemon.controller';
 
 dotenv.config();
 
@@ -86,6 +88,8 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/user', userController(socket));
 app.use('/location', locationController(socket));
+app.use('/encounter', encounterController(socket));
+app.use('/pokemon', pokemonController(socket));
 
 // Export the app instance
 export { app, server, startServer };

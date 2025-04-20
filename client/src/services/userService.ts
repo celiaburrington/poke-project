@@ -1,3 +1,4 @@
+import { Encounter } from "../types/encounter.types";
 import { SafeUser, User, UserUpdates } from "../types/user.types";
 import api from "./config";
 
@@ -106,6 +107,16 @@ const getUserById = async (uid: string): Promise<SafeUser> => {
   return res.data;
 };
 
+const getUsersEncounters = async (uid: string): Promise<Encounter[]> => {
+  const res = await api.get(`${USER_API_URL}/getUserEncounters/${uid}`);
+
+  if (res.status !== 200) {
+    throw new Error("Error fetching encounters");
+  }
+
+  return res.data;
+};
+
 export {
   addUser,
   loginUser,
@@ -113,4 +124,5 @@ export {
   userProfile,
   updateCurrentUser,
   getUserById,
+  getUsersEncounters,
 };

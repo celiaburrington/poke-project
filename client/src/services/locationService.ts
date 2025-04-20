@@ -12,7 +12,7 @@ const fetchLocations = async (): Promise<Location[]> => {
   const res = await api.get(`${LOCATION_API_URL}/fetchLocations`);
 
   if (res.status !== 200) {
-    throw new Error("Error while creating a new user");
+    throw new Error("Error fetching locations");
   }
 
   return res.data;
@@ -27,7 +27,7 @@ const getLocationById = async (locationId: string): Promise<Location> => {
   const res = await api.get(`${LOCATION_API_URL}/getLocation/${locationId}`);
 
   if (res.status !== 200) {
-    throw new Error("Error while creating a new user");
+    throw new Error("Error getting location");
   }
 
   return res.data;

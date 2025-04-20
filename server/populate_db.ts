@@ -53,7 +53,7 @@ async function fetchAPIPokedex(): Promise<Pokemon[]> {
   const pokemonList = results.map(elt => {
     const splitUrl = elt.url.split('/').filter(str => str !== '');
     return {
-      api_id: parseInt(splitUrl[splitUrl.length - 1]),
+      api_id: parseInt(splitUrl[splitUrl.length - 1], 10),
       name: elt.name,
     };
   });
@@ -123,6 +123,7 @@ async function locationCreate(
 /**
  * Creates a new Encounter document in the database.
  *
+ * @param user
  * @param pokemon
  * @param location
  * @param encountered_at
@@ -131,13 +132,22 @@ async function locationCreate(
  * @throws An error if any of the parameters are invalid.
  */
 async function encounterCreate(
+  user: User,
   pokemon: Pokemon,
   location: Location,
   encountered_at: Date = new Date(),
 ): Promise<Encounter> {
-  if (pokemon === null || pokemon === undefined || location === null || location === undefined)
+  if (
+    pokemon === null ||
+    pokemon === undefined ||
+    location === null ||
+    location === undefined ||
+    user === null ||
+    user === undefined
+  )
     throw new Error('Invalid Encounter Format');
   const encounterDetail: Encounter = {
+    user,
     pokemon,
     location,
     encountered_at,
@@ -151,7 +161,6 @@ async function encounterCreate(
  * @param username
  * @param password
  * @param role
- * @param encounters
  * @param first_name
  * @param last_name
  * @param email
@@ -164,7 +173,6 @@ async function userCreate(
   username: string,
   password: string,
   role: UserRole,
-  encounters: Encounter[],
   first_name?: string,
   last_name?: string,
   email?: string,
@@ -176,7 +184,6 @@ async function userCreate(
     password,
     role,
     date_joined: new Date(),
-    encounters,
     first_name,
     last_name,
     email,
@@ -213,80 +220,116 @@ const populate = async () => {
     );
     const locations = await Promise.all(promiseLocs);
 
-    // Create Encounters
-    const E1 = await encounterCreate(pokedex[1], locations[0], new Date('2025-03-20T14:30:00'));
-    const E2 = await encounterCreate(pokedex[11], locations[1]);
-    const E3 = await encounterCreate(pokedex[574], locations[2]);
-    const E4 = await encounterCreate(pokedex[708], locations[3]);
-    const E5 = await encounterCreate(pokedex[286], locations[4]);
-    const E6 = await encounterCreate(pokedex[65], locations[5], new Date('2025-01-01T01:01:00'));
-    const E7 = await encounterCreate(pokedex[109], locations[6], new Date('2025-03-02T10:16:00'));
-    const E8 = await encounterCreate(pokedex[81], locations[7]);
-    const E9 = await encounterCreate(pokedex[428], locations[8], new Date('2025-02-20T14:34:00'));
-    const E10 = await encounterCreate(pokedex[334], locations[9]);
-    const E11 = await encounterCreate(pokedex[416], locations[10], new Date('2024-12-20T14:30:00'));
-    const E12 = await encounterCreate(pokedex[157], locations[11], new Date('2024-11-16T06:45:00'));
-    const E13 = await encounterCreate(pokedex[705], locations[12]);
-    const E14 = await encounterCreate(pokedex[78], locations[13]);
-    const E15 = await encounterCreate(pokedex[687], locations[14], new Date('2025-03-06T21:06:00'));
-    const E16 = await encounterCreate(pokedex[254], locations[15]);
-    const E17 = await encounterCreate(pokedex[349], locations[16]);
-    const E18 = await encounterCreate(pokedex[224], locations[17]);
-    const E19 = await encounterCreate(pokedex[447], locations[18]);
-    const E20 = await encounterCreate(pokedex[146], locations[19]);
-    const E21 = await encounterCreate(pokedex[467], locations[20], new Date('2025-02-14T19:52:00'));
-    const E22 = await encounterCreate(pokedex[634], locations[21]);
-    const E23 = await encounterCreate(pokedex[306], locations[22], new Date('2025-03-06T16:10:00'));
-    const E24 = await encounterCreate(pokedex[168], locations[23], new Date('2025-03-06T07:49:00'));
-    const E25 = await encounterCreate(pokedex[613], locations[24]);
-    const E26 = await encounterCreate(pokedex[329], locations[25]);
-    const E27 = await encounterCreate(pokedex[36], locations[26]);
-    const EL1 = await encounterCreate(pokedex[149], locations[8], new Date('2025-03-10T12:00:00'));
-    const EL2 = await encounterCreate(pokedex[381], locations[16], new Date('2024-09-06T00:10:00'));
-    const EM1 = await encounterCreate(pokedex[489], locations[13], new Date('2025-01-25T17:18:00'));
-    const EM2 = await encounterCreate(pokedex[150], locations[2], new Date('2025-03-19T04:04:00'));
-
     // Create Users
     const U1 = await userCreate(
       'admin',
       'password',
       UserRole.Admin,
-      [
-        E4,
-        E5,
-        E6,
-        E7,
-        E8,
-        E9,
-        E10,
-        E12,
-        E13,
-        E14,
-        E15,
-        E16,
-        E17,
-        E18,
-        E19,
-        E20,
-        E21,
-        E22,
-        E23,
-        E24,
-        E25,
-        E26,
-        E27,
-        EL1,
-        EL2,
-        EM1,
-        EM2,
-      ],
       'Admin',
       'Account',
       'admin@account.mail',
       'Admin account with full feature access for all the fun.',
     );
-    const U2 = await userCreate('pixelmon', 'qwerty123', UserRole.NewUser, [E1, E2, E3]);
-    const U3 = await userCreate('iron_man', 'stark123', UserRole.NewUser, []);
+    const U2 = await userCreate('pixelmon', 'qwerty123', UserRole.NewUser);
+    const U3 = await userCreate('iron_man', 'stark123', UserRole.NewUser);
+
+    // Create Encounters
+    const E1 = await encounterCreate(U2, pokedex[1], locations[0], new Date('2025-03-20T14:30:00'));
+    const E2 = await encounterCreate(U2, pokedex[11], locations[1]);
+    const E3 = await encounterCreate(U2, pokedex[574], locations[2]);
+    const E4 = await encounterCreate(U1, pokedex[708], locations[3]);
+    const E5 = await encounterCreate(U1, pokedex[286], locations[4]);
+    const E6 = await encounterCreate(
+      U1,
+      pokedex[65],
+      locations[5],
+      new Date('2025-01-01T01:01:00'),
+    );
+    const E7 = await encounterCreate(
+      U1,
+      pokedex[109],
+      locations[6],
+      new Date('2025-03-02T10:16:00'),
+    );
+    const E8 = await encounterCreate(U1, pokedex[81], locations[7]);
+    const E9 = await encounterCreate(
+      U1,
+      pokedex[428],
+      locations[8],
+      new Date('2025-02-20T14:34:00'),
+    );
+    const E10 = await encounterCreate(U1, pokedex[334], locations[9]);
+    const E11 = await encounterCreate(
+      U1,
+      pokedex[416],
+      locations[10],
+      new Date('2024-12-20T14:30:00'),
+    );
+    const E12 = await encounterCreate(
+      U1,
+      pokedex[157],
+      locations[11],
+      new Date('2024-11-16T06:45:00'),
+    );
+    const E13 = await encounterCreate(U1, pokedex[705], locations[12]);
+    const E14 = await encounterCreate(U1, pokedex[78], locations[13]);
+    const E15 = await encounterCreate(
+      U1,
+      pokedex[687],
+      locations[14],
+      new Date('2025-03-06T21:06:00'),
+    );
+    const E16 = await encounterCreate(U1, pokedex[254], locations[15]);
+    const E17 = await encounterCreate(U1, pokedex[349], locations[16]);
+    const E18 = await encounterCreate(U1, pokedex[224], locations[17]);
+    const E19 = await encounterCreate(U1, pokedex[447], locations[18]);
+    const E20 = await encounterCreate(U1, pokedex[146], locations[19]);
+    const E21 = await encounterCreate(
+      U1,
+      pokedex[467],
+      locations[20],
+      new Date('2025-02-14T19:52:00'),
+    );
+    const E22 = await encounterCreate(U1, pokedex[634], locations[21]);
+    const E23 = await encounterCreate(
+      U1,
+      pokedex[306],
+      locations[22],
+      new Date('2025-03-06T16:10:00'),
+    );
+    const E24 = await encounterCreate(
+      U1,
+      pokedex[168],
+      locations[23],
+      new Date('2025-03-06T07:49:00'),
+    );
+    const E25 = await encounterCreate(U1, pokedex[613], locations[24]);
+    const E26 = await encounterCreate(U1, pokedex[329], locations[25]);
+    const E27 = await encounterCreate(U1, pokedex[36], locations[26]);
+    const EL1 = await encounterCreate(
+      U1,
+      pokedex[149],
+      locations[8],
+      new Date('2025-03-10T12:00:00'),
+    );
+    const EL2 = await encounterCreate(
+      U1,
+      pokedex[381],
+      locations[16],
+      new Date('2024-09-06T00:10:00'),
+    );
+    const EM1 = await encounterCreate(
+      U1,
+      pokedex[489],
+      locations[13],
+      new Date('2025-01-25T17:18:00'),
+    );
+    const EM2 = await encounterCreate(
+      U1,
+      pokedex[150],
+      locations[2],
+      new Date('2025-03-19T04:04:00'),
+    );
 
     console.log('Database populated');
   } catch (err) {

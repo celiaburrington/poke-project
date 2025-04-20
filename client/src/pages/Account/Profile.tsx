@@ -6,11 +6,17 @@ import { SafeUser, UserUpdates } from "../../types/user.types";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../../store/reducers/account.reducer";
 import EditProfile from "./components/EditProfile";
-import { logoutUser, updateCurrentUser } from "../../services/userService";
+import {
+  getUsersEncounters,
+  logoutUser,
+  updateCurrentUser,
+} from "../../services/userService";
 import ProfileDetails from "./components/ProfileDetails";
 import { FaRegUser } from "react-icons/fa";
 import { BiSolidEdit } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
+import ProfileTabs from "./components/ProfileTabs";
+import { Encounter } from "../../types/encounter.types";
 
 /**
  * Profile page component for the profile of the User that is currently logged in.
@@ -19,6 +25,7 @@ const Profile = () => {
   const { currentUser } = useAppSelector((state) => state.accountReducer);
   const [profile, setProfile] = useState<SafeUser>();
   const [updates, setUpdates] = useState<UserUpdates>({});
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
   const [editting, setEditting] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -61,7 +68,24 @@ const Profile = () => {
       setProfile(currentUser);
     };
 
+    /**
+     * Function to fetch the current user's profile data.
+     */
+    const fetchEncouters = async () => {
+      try {
+        if (!currentUser?._id) {
+          setEncounters([]);
+          return;
+        }
+        const result = await getUsersEncounters(currentUser?._id);
+        setEncounters(result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchProfile();
+    fetchEncouters();
   }, [currentUser, navigate]);
 
   // Profile
@@ -110,6 +134,8 @@ const Profile = () => {
           </Button>
         </Card.Body>
       </Card>
+      <br />
+      <ProfileTabs encounters={encounters} />
     </Container>
   );
 };

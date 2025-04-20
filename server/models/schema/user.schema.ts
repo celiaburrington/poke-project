@@ -9,7 +9,6 @@ import { UserRole } from '../../types/user.types';
  * - `password`: The user's password. This field is required.
  * - `date_joined`: The date the user signed up. This field is required.
  * - `role`: The user's role. This field is required.
- * - `encounters`: A list of the pokemon encounters the user has had. This field is required.
  * - `first_name`: The user's first name. This field is not required.
  * - `last_name`: The user's last name. This field is not required.
  * - `email`: The user's email. This field is not required.
@@ -35,11 +34,6 @@ const userSchema: Schema = new Schema(
       type: String,
       enum: UserRole,
       required: true,
-    },
-    encounters: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Encounter' }],
-      required: true,
-      default: [],
     },
     first_name: {
       type: String,

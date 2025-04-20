@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 import { Link, useParams } from "react-router";
-import { getUserById } from "../../services/userService";
+import { getUserById, getUsersEncounters } from "../../services/userService";
 import { SafeUser } from "../../types/user.types";
 import ProfileDetails from "./components/ProfileDetails";
 import { FaRegUser } from "react-icons/fa6";
+import { Encounter } from "../../types/encounter.types";
+import ProfileTabs from "./components/ProfileTabs";
 
 /**
  * Public Profile page component displaying the public details of a User's profile page.
@@ -12,6 +14,7 @@ import { FaRegUser } from "react-icons/fa6";
 const PublicProfile = () => {
   const { uid } = useParams();
   const [user, setUser] = useState<SafeUser>();
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -21,13 +24,30 @@ const PublicProfile = () => {
       try {
         const userFromDb = await getUserById(uid);
         setUser(userFromDb);
+        fetchEncouters();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    /**
+     * Function to fetch the current user's profile data.
+     */
+    const fetchEncouters = async () => {
+      try {
+        if (!user?._id) {
+          setEncounters([]);
+          return;
+        }
+        const result = await getUsersEncounters(user._id);
+        setEncounters(result);
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchUserDetails();
-  }, [uid]);
+  }, [uid, user?._id]);
 
   return (
     <Container className="pp-public-profile">
@@ -45,6 +65,8 @@ const PublicProfile = () => {
               <ProfileDetails profile={user} isPublic={true} />
             </Card.Body>
           </Card>
+          <br />
+          <ProfileTabs encounters={encounters} />
         </>
       )}
       {!user && (

@@ -1,6 +1,8 @@
 import { Container, FormControl } from "react-bootstrap";
 import Pokedex from "./Pokedex";
 
+// !!!!!!!!!!!!!!!!!!! <Form inline> bootstrap navbar page
+
 /**
  * Search page component allows Users to search for specific Pokémon.
  * A User can view the full Pokédex, and filter results (TBD).

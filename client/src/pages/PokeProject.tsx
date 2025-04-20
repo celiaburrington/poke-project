@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import store from "../store/store";
 import Session from "./Account/components/Session";
 import PublicProfile from "./Account/PublicProfile";
+import Details from "./Details";
 
 /**
  * ProtectedRoute component accesses current user from Redux store. If currentUser is not null,
@@ -49,10 +50,7 @@ function PokeProject() {
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Profile/:uid" element={<PublicProfile />} />
           <Route path="/Search" element={<Search />} />
-          <Route
-            path="/Details/:pid"
-            element={<h3>Details for a Pokémon</h3>}
-          />
+          <Route path="/Details/:pid" element={<Details />} />
 
           {/* Protected Routes */}
           <Route

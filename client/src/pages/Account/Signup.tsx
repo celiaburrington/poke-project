@@ -47,7 +47,6 @@ const Signup = () => {
         password,
         role: UserRole.NewUser,
         date_joined: new Date(),
-        encounters: [],
       });
 
       dispatch(setCurrentUser(newUser));
@@ -96,8 +95,8 @@ const Signup = () => {
       <Button className="btn-primary" onClick={handleSignUp}>
         Login
       </Button>
-      {signupErr && <div>{signupErr}</div>}
-      <br />
+      {signupErr && <div className="alert alert-danger mb-2">{signupErr}</div>}
+      {!signupErr && <br />}
       Already have an account? <Link to="/Login">Login</Link>
     </Container>
   );
