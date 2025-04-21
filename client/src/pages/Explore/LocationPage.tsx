@@ -2,10 +2,7 @@ import { Button, Container } from "react-bootstrap";
 import { Location } from "../../types/location.types";
 import { FaLocationArrow } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
-import { useAppSelector } from "../../hooks/useTypedRedux";
-import { UserRole } from "../../types/user.types";
 import EncounterCard from "./components/EncounterCard";
-import AdminEncounterList from "./components/AdminEncounterList";
 import { Encounter } from "../../types/encounter.types";
 import { useState } from "react";
 import { randomEncounter } from "../../services/encounterService";
@@ -17,8 +14,6 @@ export default function LocationPage({
   location: Location;
   goExplore: () => void;
 }) {
-  const { currentUser } = useAppSelector((state) => state.accountReducer);
-  const isAdmin = currentUser?.role === UserRole.Admin;
   const [disabled, setDisabled] = useState<boolean>(false);
   const [areaEncounter, setAreaEncounter] = useState<Encounter | null>(null);
   const locationURL = useLocation();
@@ -80,7 +75,6 @@ export default function LocationPage({
       <Link to="/Home">
         <Button className="btn-danger">Return Home</Button>
       </Link>
-      {isAdmin && <AdminEncounterList pokemon={location.encounter_list} />}
     </Container>
   );
 }
