@@ -3,6 +3,7 @@ import SpeciesAPIResponse, {
   EvolutionAPIResponse,
   GenerationAPIResponse,
   PokemonAPIResponse,
+  TypesAPIResponse,
 } from '../types/api.types';
 
 function createTypedCache<T extends object>() {
@@ -16,5 +17,6 @@ const pokemonCache = createTypedCache<PokemonAPIResponse>();
 const speciesCache = createTypedCache<SpeciesAPIResponse>();
 const generationCache = createTypedCache<GenerationAPIResponse>();
 const evolutionCache = createTypedCache<EvolutionAPIResponse>();
+const typesCache = createTypedCache<TypesAPIResponse>();
 
-export { pokemonCache, speciesCache, generationCache, evolutionCache };
+export { pokemonCache, speciesCache, generationCache, evolutionCache, typesCache };

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -8,56 +8,31 @@ import {
   ListGroup,
   ListGroupItem,
 } from "react-bootstrap";
+import { Pokemon } from "../../types/pokemon.types";
+import { Link, useLocation } from "react-router";
 
 /**
  * Pokedex component displays Pokémon results from a User's search.
  */
-export default function Pokedex() {
-  // TODO: Retrieve this from database
-  const DEX_TOTAL = 1025;
-  const dexIDs = new Array(DEX_TOTAL).fill(0).map((_x, idx) => {
-    return {
-      id: idx + 1,
-      sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
-        idx + 1
-      }.png`,
-    };
-  });
-
+export default function Pokedex({ pokemon }: { pokemon: Pokemon[] }) {
+  const location = useLocation();
   const [disableNext, setDisableNext] = useState<boolean>(false);
   const [disablePrev, setDisablePrev] = useState<boolean>(true);
   const [offset, setOffset] = useState<number>(0);
   const [monsPerPage, setMonsPerPage] = useState<number>(20);
-  const [mons, setMons] = useState(dexIDs.slice(offset, monsPerPage));
+  const [mons, setMons] = useState<Pokemon[]>([]);
 
   /**
-   * Sets the Next button's disable value based on the given offset and 'mons per page values
+   * Function to return the URL for a Pokémon's sprite image base on the Pokémon's API ID.
    *
-   * @param newOffset offset to use for check
-   * @param newMonsPerPage Pokémon per page count to use for check
-   * @returns void
+   * @param api_id pokémon id
+   * @param shiny shiny sprite?
+   * @returns The sprite URL
    */
-  const checkDisableNext = (newOffset: number, newMonsPerPage: number) => {
-    if (newOffset <= DEX_TOTAL - newMonsPerPage) {
-      setDisableNext(false);
-      return;
-    }
-    setDisableNext(true);
-  };
-
-  /**
-   * Sets the Previous button's disable value based on the given offset and 'mons per page values
-   *
-   * @param newOffset offset to use for check
-   * @param newMonsPerPage Pokémon per page count to use for check
-   * @returns void
-   */
-  const checkDisablePrev = (newOffset: number, newMonsPerPage: number) => {
-    if (newOffset >= newMonsPerPage) {
-      setDisablePrev(false);
-      return;
-    }
-    setDisablePrev(true);
+  const getSpriteURL = (api_id: number, shiny = false) => {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon${
+      shiny ? "/shiny" : ""
+    }/${api_id}.png`;
   };
 
   /**
@@ -67,10 +42,7 @@ export default function Pokedex() {
     if (!disableNext) {
       const newOffset = offset + monsPerPage;
       setOffset(newOffset);
-      setMons(dexIDs.slice(newOffset, newOffset + monsPerPage));
-      checkDisableNext(newOffset, monsPerPage);
-      checkDisablePrev(newOffset, monsPerPage);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -81,10 +53,7 @@ export default function Pokedex() {
     if (!disablePrev) {
       const newOffset = offset - monsPerPage;
       setOffset(newOffset);
-      setMons(dexIDs.slice(newOffset, newOffset + monsPerPage));
-      checkDisableNext(newOffset, monsPerPage);
-      checkDisablePrev(newOffset, monsPerPage);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -99,16 +68,21 @@ export default function Pokedex() {
     }
 
     setMonsPerPage(newSize);
-    setMons(dexIDs.slice(offset, offset + newSize));
-    checkDisableNext(offset, newSize);
-    checkDisablePrev(offset, newSize);
   };
+
+  useEffect(() => {
+    const newMons = pokemon.slice(offset, offset + monsPerPage);
+    setMons(newMons);
+
+    setDisableNext(offset + monsPerPage >= pokemon.length);
+    setDisablePrev(offset === 0);
+  }, [pokemon, offset, monsPerPage]);
 
   return (
     <Container id="pp-pokedex">
       <FormGroup>
         <FormLabel>Pokémon Per Page</FormLabel>
-        <FormSelect defaultValue="20" onChange={setPageSize}>
+        <FormSelect className="w-50" defaultValue="20" onChange={setPageSize}>
           <option value="10">10</option>
           <option value="20">20</option>
           <option value="30">30</option>
@@ -116,10 +90,25 @@ export default function Pokedex() {
       </FormGroup>
       <br />
       <ListGroup>
-        {mons.map((entry, i) => (
-          <ListGroupItem key={i}>
-            {entry.id}
-            <img src={entry.sprite}></img>
+        {mons.map((entry) => (
+          <ListGroupItem
+            as={Link}
+            to={`/Details/${entry.api_id}`}
+            state={{ from: location }}
+            key={entry.api_id}
+            className="d-flex align-items-center justify-content-between bg-light"
+          >
+            <div className="d-flex flex-column ms-5">
+              <span className="text-capitalize fw-bold">{entry.name}</span>
+              <span className="">#{entry.api_id}</span>
+            </div>
+            <div>
+              <img
+                className="me-5"
+                src={getSpriteURL(entry.api_id)}
+                alt={entry.name}
+              />
+            </div>
           </ListGroupItem>
         ))}
       </ListGroup>

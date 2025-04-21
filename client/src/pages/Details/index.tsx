@@ -7,7 +7,7 @@ import {
   getUsersPokemonEncounters,
 } from "../../services/encounterService";
 import { Pokemon, PokemonDetails } from "../../types/pokemon.types";
-import getPokemonDetails from "../../services/pokemonService";
+import { getPokemonDetails } from "../../services/pokemonService";
 import DetailsPage from "./DetailsPage";
 import { useAppSelector } from "../../hooks/useTypedRedux";
 import {
@@ -45,11 +45,8 @@ export default function Details() {
       );
     } else {
       return (
-        <Button
-          className="btn-danger float-end"
-          onClick={() => navigate(fromPage)}
-        >
-          {fromPage.includes("Search") ? "Back to Search" : "Return Home"}
+        <Button className="btn-danger float-end" onClick={() => navigate(-1)}>
+          {fromPage.includes("Search") ? "Back to Search" : "Back"}
         </Button>
       );
     }

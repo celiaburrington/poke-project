@@ -69,11 +69,11 @@ export default function Home() {
       <hr />
       <CardGroup>
         <Card>
-          <Card.Header>Encounter Wild Pokémon</Card.Header>
+          <Card.Header className="fw-bold">Encounter Wild Pokémon</Card.Header>
           <Card.Body>
             <Card.Text>
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
+              Travel to a random location and see which Pokémon you encounter in
+              the wild! Each new discovery unlocks more info in your Pokédex.
             </Card.Text>
             <Link to="/Explore">
               <Button className="btn-primary">Go Explore!!</Button>
@@ -81,26 +81,26 @@ export default function Home() {
           </Card.Body>
         </Card>
         <Card>
-          <Card.Header>Search the Pokédex</Card.Header>
+          <Card.Header className="fw-bold">Search the Pokédex</Card.Header>
           <Card.Body>
             <Card.Text>
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
+              Look up Pokémon by name or filter by type and generation. Check
+              out hidden info after you’ve encountered a Pokémon!
             </Card.Text>
             <Link to="/Search">
-              <Button className="btn-primary">Pokédex</Button>
+              <Button className="btn-primary">To the Pokédex</Button>
             </Link>
           </Card.Body>
         </Card>
         <Card>
-          <Card.Header>Track Your Progress</Card.Header>
+          <Card.Header className="fw-bold">Track Your Progress</Card.Header>
           <Card.Body>
             <Card.Text>
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
+              View all your encounters and favorite Pokémon on your profile
+              page. See how far you’ve come on your journey to catch ’em all!
             </Card.Text>
             <Link to="/Profile">
-              <Button className="btn-primary">???</Button>
+              <Button className="btn-primary">Check It Out</Button>
             </Link>
           </Card.Body>
         </Card>

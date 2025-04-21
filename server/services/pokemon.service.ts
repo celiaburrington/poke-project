@@ -1,15 +1,60 @@
 import { LRUCache } from 'lru-cache';
+import { distance } from 'fastest-levenshtein';
 import PokemonModel from '../models/pokemon.model';
 import SpeciesAPIResponse, {
   EvolutionAPIResponse,
   EvolutionChainAPIResponse,
   GenerationAPIResponse,
   PokemonAPIResponse,
+  TypesAPIResponse,
 } from '../types/api.types';
-import { EvolutionChain, PokemonDetails } from '../types/pokemon.types';
-import { evolutionCache, generationCache, pokemonCache, speciesCache } from '../utils/cache';
+import { EvolutionChain, PokedexOrder, Pokemon, PokemonDetails } from '../types/pokemon.types';
+import {
+  evolutionCache,
+  generationCache,
+  pokemonCache,
+  speciesCache,
+  typesCache,
+} from '../utils/cache';
 
-export const getEvolutionLine = (chain: EvolutionChainAPIResponse) => {
+const SPECIES_ALTS = [
+  'deoxys-normal',
+  'wormadam-plant',
+  'giratina-altered',
+  'shaymin-land',
+  'basculin-red-striped',
+  'darmanitan-standard',
+  'tornadus-incarnate',
+  'thundurus-incarnate',
+  'landorus-incarnate',
+  'keldeo-ordinary',
+  'meloetta-aria',
+  'meowstic-male',
+  'aegislash-shield',
+  'pumpkaboo-average',
+  'gourgeist-average',
+  'zygarde-50',
+  'oricorio-baile',
+  'lycanroc-midday',
+  'wishiwashi-solo',
+  'minior-red-meteor',
+  'mimikyu-disguised',
+  'toxtricity-amped',
+  'eiscue-ice',
+  'indeedee-male',
+  'morpeko-full-belly',
+  'urshifu-single-strike',
+  'basculegion-male',
+  'enamorus-incarnate',
+  'oinkologne-male',
+  'maushold-family-of-four',
+  'squawkabilly-green-plumage',
+  'palafin-zero',
+  'tatsugiri-curly',
+  'dudunsparce-two-segment',
+];
+
+const getEvolutionLine = (chain: EvolutionChainAPIResponse) => {
   const splitUrl = chain.species.url.split('/').filter(str => str !== '');
   const entry: EvolutionChain = {
     name: chain.species.name,
@@ -139,5 +184,85 @@ export const getPokemonDetails = async (
     return details;
   } catch (error) {
     return { error: (error as Error).message };
+  }
+};
+
+export const getPokedex = async (): Promise<Pokemon[]> => {
+  try {
+    const allPokemon = await PokemonModel.find().sort({ api_id: 1 });
+
+    if (!allPokemon) {
+      return [];
+    }
+
+    return allPokemon;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const filterPokemonByName = (
+  name: string,
+  order: PokedexOrder,
+  plist: Pokemon[],
+): Pokemon[] => {
+  const regex = new RegExp(name);
+  if (order === 'bestMatch') {
+    return plist
+      .map(p => ({
+        p,
+        dist: p.name === name ? -1 : distance(p.name, name.toLowerCase()),
+      }))
+      .filter(p => regex.test(p.p.name) || p.dist <= 2)
+      .sort((p1, p2) => p1.dist - p2.dist)
+      .map(p => p.p);
+  }
+
+  return plist.filter(p => regex.test(p.name) || distance(p.name, name.toLowerCase()) <= 2);
+};
+
+export const filterPokemonByType = async (type: string, plist: Pokemon[]): Promise<Pokemon[]> => {
+  try {
+    const typeResponse = (await getDataFromAPI(
+      type,
+      typesCache,
+      `https://pokeapi.co/api/v2/type/${type}`,
+    )) as TypesAPIResponse | { error: string };
+
+    if ('error' in typeResponse) {
+      return plist;
+    }
+
+    const names = typeResponse.pokemon.map(entry => {
+      if (SPECIES_ALTS.includes(entry.pokemon.name)) {
+        return entry.pokemon.name.split('-')[0];
+      }
+      return entry.pokemon.name;
+    });
+    return plist.filter(p => names.includes(p.name));
+  } catch (error) {
+    return [];
+  }
+};
+
+export const filterPokemonByGeneration = async (
+  generation: string,
+  plist: Pokemon[],
+): Promise<Pokemon[]> => {
+  try {
+    const genResponse = (await getDataFromAPI(
+      generation,
+      typesCache,
+      `https://pokeapi.co/api/v2/generation/${generation}`,
+    )) as GenerationAPIResponse | { error: string };
+
+    if ('error' in genResponse) {
+      return plist;
+    }
+
+    const names = genResponse.pokemon_species.map(entry => entry.name);
+    return plist.filter(p => names.includes(p.name));
+  } catch (error) {
+    return [];
   }
 };

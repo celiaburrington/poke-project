@@ -394,6 +394,177 @@ export default interface SpeciesAPIResponse {
     };
   }[];
 }
+/**
+ * Interface representing the fields in a response from the PokéAPI types endpoint.
+ */
+export interface TypesAPIResponse {
+  damage_relations: {
+    double_damage_from: {
+      name: string;
+      url: string;
+    }[];
+    double_damage_to: {
+      name: string;
+      url: string;
+    }[];
+    half_damage_from: {
+      name: string;
+      url: string;
+    }[];
+    half_damage_to: {
+      name: string;
+      url: string;
+    }[];
+    no_damage_from: {
+      name: string;
+      url: string;
+    }[];
+    no_damage_to: {
+      name: string;
+      url: string;
+    }[];
+  };
+  game_indices: {
+    game_index: number;
+    generation: {
+      name: string;
+      url: string;
+    };
+  }[];
+  generation: {
+    name: string;
+    url: string;
+  };
+  id: number;
+  move_damage_class: {
+    name: string;
+    url: string;
+  } | null;
+  moves: {
+    name: string;
+    url: string;
+  }[];
+  name: string;
+  names: {
+    language: {
+      name: string;
+      url: string;
+    };
+    name: string;
+  }[];
+  past_damage_relations: {
+    damage_relations: {
+      double_damage_from: {
+        name: string;
+        url: string;
+      }[];
+      double_damage_to: {
+        name: string;
+        url: string;
+      }[];
+      half_damage_from: {
+        name: string;
+        url: string;
+      }[];
+      half_damage_to: {
+        name: string;
+        url: string;
+      }[];
+      no_damage_from: {
+        name: string;
+        url: string;
+      }[];
+      no_damage_to: {
+        name: string;
+        url: string;
+      }[];
+    };
+    generation: {
+      name: string;
+      url: string;
+    };
+  }[];
+  pokemon: {
+    pokemon: {
+      name: string;
+      url: string;
+    };
+    slot: number;
+  }[];
+  sprites: {
+    'generation-iii': {
+      'colosseum': {
+        name_icon: string | null;
+      };
+      'emerald': {
+        name_icon: string | null;
+      };
+      'firered-leafgreen': {
+        name_icon: string | null;
+      };
+      'ruby-saphire': {
+        name_icon: string | null;
+      };
+      'xd': {
+        name_icon: string | null;
+      };
+    };
+    'generation-iv': {
+      'diamond-pearl': {
+        name_icon: string | null;
+      };
+      'heartgold-soulsilver': {
+        name_icon: string | null;
+      };
+      'platinum': {
+        name_icon: string | null;
+      };
+    };
+    'generation-ix': {
+      'scarlet-violet': {
+        name_icon: string | null;
+      };
+    };
+    'generation-v': {
+      'black-2-white-2': {
+        name_icon: string | null;
+      };
+      'black-white': {
+        name_icon: string | null;
+      };
+    };
+    'generation-vi': {
+      'omega-ruby-alpha-sapphire': {
+        name_icon: string | null;
+      };
+      'x-y': {
+        name_icon: string | null;
+      };
+    };
+    'generation-vii': {
+      'lets-go-pikachu-lets-go-eevee': {
+        name_icon: string | null;
+      };
+      'sun-moon': {
+        name_icon: string | null;
+      };
+      'ultra-sun-ultra-moon': {
+        name_icon: string | null;
+      };
+    };
+    'generation-viii': {
+      'brilliant-diamond-and-shining-pearl': {
+        name_icon: string | null;
+      };
+      'legends-arceus': {
+        name_icon: string | null;
+      };
+      'sword-shield': {
+        name_icon: string | null;
+      };
+    };
+  };
+}
 
 /**
  * Interface representing the fields in a response from the PokéAPI version endpoint.

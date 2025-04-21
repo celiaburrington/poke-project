@@ -1,6 +1,8 @@
 import { Request } from 'express';
 import { ObjectId } from 'mongodb';
 
+export type PokedexOrder = 'number' | 'bestMatch';
+
 /**
  * Interface representing a Pokemon document.
  *
@@ -52,5 +54,14 @@ export interface PokemonDetails extends Pokemon {
 export interface GetPokemonDetailsRequest extends Request {
   params: {
     pid: string;
+  };
+}
+
+export interface SearchPokemonRequest extends Request {
+  query: {
+    name: string;
+    order: PokedexOrder;
+    type: string;
+    generation: string;
   };
 }
