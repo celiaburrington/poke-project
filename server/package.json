@@ -13,6 +13,7 @@
   "license": "ISC",
   "author": "Celia Burrington",
   "dependencies": {
+    "@types/express": "^4.17.21",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
