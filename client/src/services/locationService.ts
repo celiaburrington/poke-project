@@ -33,4 +33,39 @@ const getLocationById = async (locationId: string): Promise<Location> => {
   return res.data;
 };
 
-export { fetchLocations, getLocationById };
+const addMonToLocation = async (
+  locationId: string,
+  name: string
+): Promise<Location> => {
+  const res = await api.put(
+    `${LOCATION_API_URL}/addPokemon/${locationId}/${name}`
+  );
+
+  if (res.status !== 200) {
+    throw new Error("Error adding encounter to location");
+  }
+
+  return res.data;
+};
+
+const removeMonFromLocation = async (
+  locationId: string,
+  pid: string
+): Promise<Location> => {
+  const res = await api.delete(
+    `${LOCATION_API_URL}/deletePokemon/${locationId}/${pid}`
+  );
+
+  if (res.status !== 200) {
+    throw new Error("Error deleting encounter from location");
+  }
+
+  return res.data;
+};
+
+export {
+  fetchLocations,
+  getLocationById,
+  addMonToLocation,
+  removeMonFromLocation,
+};

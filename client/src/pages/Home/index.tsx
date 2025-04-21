@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchEncounters } from "../../services/encounterService";
 import EncounterLog from "./EncounterLog";
 import { getUsersEncounters } from "../../services/userService";
+import { UserRole } from "../../types/user.types";
 
 /**
  * PokéProject Home page component advertising web application features to anonymous Users,
@@ -62,6 +63,13 @@ export default function Home() {
       ) : (
         <Link to="/Login">
           <Button className="btn-primary float-end m-2">Login</Button>
+        </Link>
+      )}
+      {currentUser?.role === UserRole.Admin && (
+        <Link to="/ManageEncounters">
+          <Button className="btn-warning m-2 float-end">
+            Manage Encounters
+          </Button>
         </Link>
       )}
       <br />

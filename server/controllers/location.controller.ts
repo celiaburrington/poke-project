@@ -1,7 +1,16 @@
 import express, { Request, Response } from 'express';
 import { PokeProjectSocket } from '../types/types';
-import { GetLocationRequest } from '../types/location.types';
-import { fetchAllLocations, getEncounters } from '../services/location.service';
+import {
+  AddEncounterRequest,
+  DeleteEncounterRequest,
+  GetLocationRequest,
+} from '../types/location.types';
+import {
+  addEncounterToLoc,
+  deleteEncounterFromLoc,
+  fetchAllLocations,
+  getEncounters,
+} from '../services/location.service';
 
 const locationController = (socket: PokeProjectSocket) => {
   const router = express.Router();
@@ -61,9 +70,43 @@ const locationController = (socket: PokeProjectSocket) => {
     }
   };
 
+  const addEncounter = async (req: AddEncounterRequest, res: Response): Promise<void> => {
+    const { locationId, name } = req.params;
+
+    try {
+      const location = await addEncounterToLoc(locationId, name);
+
+      if ('error' in location) {
+        throw new Error(location.error as string);
+      }
+
+      res.json(location);
+    } catch (err) {
+      res.status(500).send(`${(err as Error).message}`);
+    }
+  };
+
+  const deleteEncounter = async (req: DeleteEncounterRequest, res: Response): Promise<void> => {
+    const { locationId, pid } = req.params;
+
+    try {
+      const location = await deleteEncounterFromLoc(locationId, pid);
+
+      if ('error' in location) {
+        throw new Error(location.error as string);
+      }
+
+      res.json(location);
+    } catch (err) {
+      res.status(500).send(`${(err as Error).message}`);
+    }
+  };
+
   // Routes
   router.get('/fetchLocations', fetchLocations);
   router.get('/getLocation/:locationId', getLocationById);
+  router.put('/addPokemon/:locationId/:name', addEncounter);
+  router.delete('/deletePokemon/:locationId/:pid', deleteEncounter);
 
   return router;
 };

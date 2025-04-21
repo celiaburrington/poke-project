@@ -12,6 +12,24 @@ import store from "../store/store";
 import Session from "./Account/components/Session";
 import PublicProfile from "./Account/PublicProfile";
 import Details from "./Details";
+import { UserRole } from "../types/user.types";
+import ManageEncounters from "./Explore/ManageEncounters";
+
+const AdminRoute = ({
+  children,
+  redirect,
+}: {
+  children: JSX.Element;
+  redirect: string;
+}) => {
+  const { currentUser } = useAppSelector((state) => state.accountReducer);
+
+  if (!currentUser || !(currentUser.role === UserRole.Admin)) {
+    return <Navigate to={`/${redirect}`} />;
+  }
+
+  return children;
+};
 
 /**
  * ProtectedRoute component accesses current user from Redux store. If currentUser is not null,
@@ -26,7 +44,6 @@ const ProtectedRoute = ({
 }) => {
   const { currentUser } = useAppSelector((state) => state.accountReducer);
 
-  console.log(currentUser);
   if (!currentUser) {
     return <Navigate to={`/${redirect}`} />;
   }
@@ -56,6 +73,12 @@ function PokeProject() {
           <Route
             path="/Profile"
             element={<ProtectedRoute redirect="Home" children={<Profile />} />}
+          />
+          <Route
+            path="/ManageEncounters"
+            element={
+              <AdminRoute redirect="Explore" children={<ManageEncounters />} />
+            }
           />
           <Route
             path="/Explore/*"

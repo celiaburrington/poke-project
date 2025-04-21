@@ -64,3 +64,17 @@ export interface GetLocationRequest extends Request {
     locationId: string;
   };
 }
+
+export interface DeleteEncounterRequest extends Request {
+  params: {
+    locationId: string;
+    pid: string;
+  };
+}
+
+export interface AddEncounterRequest extends Request {
+  params: {
+    locationId: string;
+    name: string;
+  };
+}
