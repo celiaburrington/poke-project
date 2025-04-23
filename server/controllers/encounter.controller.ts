@@ -162,19 +162,20 @@ const encounterController = (socket: PokeProjectSocket) => {
   const randomEncounter = async (req: RandomEncounterRequest, res: Response): Promise<void> => {
     const locationInfo = req.body;
     const randEncounter = Math.floor(Math.random() * locationInfo.encounter_list.length);
-    const { currentUser } = req.session;
-    if (!currentUser) {
-      throw Error('Invalid session for this operation');
-    }
-
-    const newEncounter: Encounter = {
-      user: currentUser,
-      pokemon: locationInfo.encounter_list[randEncounter],
-      location: locationInfo,
-      encountered_at: new Date(),
-    };
 
     try {
+      const { currentUser } = req.session;
+      if (!currentUser) {
+        throw Error('Invalid session for this operation');
+      }
+
+      const newEncounter: Encounter = {
+        user: currentUser,
+        pokemon: locationInfo.encounter_list[randEncounter],
+        location: locationInfo,
+        encountered_at: new Date(),
+      };
+
       const encounterFromDb = await saveEncounter(newEncounter);
 
       if ('error' in encounterFromDb) {

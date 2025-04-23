@@ -1,4 +1,11 @@
-import { Button, Card, CardGroup, Container, Row } from "react-bootstrap";
+import {
+  Alert,
+  Button,
+  Card,
+  CardGroup,
+  Container,
+  Row,
+} from "react-bootstrap";
 import { Link } from "react-router";
 import { useAppSelector } from "../../hooks/useTypedRedux";
 import { FaRegUser } from "react-icons/fa6";
@@ -75,13 +82,20 @@ export default function Home() {
       <br />
       <br />
       <hr />
+      <Alert variant="info">
+        Disclaimer: This is a non-commercial, fan-made educational project
+        created solely for the purpose of learning web development. It is not
+        affiliated with or endorsed by Nintendo, Game Freak, or The Pokémon
+        Company. All assets and data used are for educational demonstration
+        purposes only.
+      </Alert>
       <CardGroup>
         <Card>
           <Card.Header className="fw-bold">Encounter Wild Pokémon</Card.Header>
           <Card.Body>
-            <Card.Text>
+            <Card.Text className="mb-4">
               Travel to a random location and see which Pokémon you encounter in
-              the wild! Each new discovery unlocks more info in your Pokédex.
+              the wild! Each discovery unlocks more info in your Pokédex.
             </Card.Text>
             <Link to="/Explore">
               <Button className="btn-primary">Go Explore!!</Button>
@@ -91,7 +105,7 @@ export default function Home() {
         <Card>
           <Card.Header className="fw-bold">Search the Pokédex</Card.Header>
           <Card.Body>
-            <Card.Text>
+            <Card.Text className="mb-4">
               Look up Pokémon by name or filter by type and generation. Check
               out hidden info after you’ve encountered a Pokémon!
             </Card.Text>
@@ -103,7 +117,7 @@ export default function Home() {
         <Card>
           <Card.Header className="fw-bold">Track Your Progress</Card.Header>
           <Card.Body>
-            <Card.Text>
+            <Card.Text className="mb-4">
               View all your encounters and favorite Pokémon on your profile
               page. See how far you’ve come on your journey to catch ’em all!
             </Card.Text>
@@ -117,7 +131,7 @@ export default function Home() {
       {currentUser && (
         <>
           <h4>Your Last Encounters</h4>
-          {encounters.length === 0 && (
+          {userEncounters.length === 0 && (
             <div className="alert alert-primary">
               Go exploring to start filling up your Pokédex!
             </div>
@@ -140,6 +154,12 @@ export default function Home() {
           type={currentUser ? "banner" : "private"}
         />
       ))}
+      <Card>
+        <Card.Header className="text-center">
+          Pokémon and All Respective Names are Trademark and © of Nintendo
+          1996-2025
+        </Card.Header>
+      </Card>
     </Container>
   );
 }
