@@ -3,6 +3,7 @@ import { Card } from "react-bootstrap";
 import { Encounter } from "../../types/encounter.types";
 import { Link } from "react-router-dom";
 import EncounterCard from "../Explore/components/EncounterCard";
+import getSpriteURL from "../../utils";
 
 export default function EncounterLog({
   encounter,
@@ -11,12 +12,6 @@ export default function EncounterLog({
   encounter: Encounter;
   type?: string;
 }) {
-  const getSpriteURL = (api_id: number, shiny = false) => {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon${
-      shiny ? "/shiny" : ""
-    }/${api_id}.png`;
-  };
-
   if (type === "card") {
     return <EncounterCard pokemon={encounter.pokemon} />;
   } else if (type === "private") {

@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { Pokemon } from "../../types/pokemon.types";
 import { Link, useLocation } from "react-router";
+import getSpriteURL from "../../utils";
 
 /**
  * Pokedex component displays Pokémon results from a User's search.
@@ -21,19 +22,6 @@ export default function Pokedex({ pokemon }: { pokemon: Pokemon[] }) {
   const [offset, setOffset] = useState<number>(0);
   const [monsPerPage, setMonsPerPage] = useState<number>(20);
   const [mons, setMons] = useState<Pokemon[]>([]);
-
-  /**
-   * Function to return the URL for a Pokémon's sprite image base on the Pokémon's API ID.
-   *
-   * @param api_id pokémon id
-   * @param shiny shiny sprite?
-   * @returns The sprite URL
-   */
-  const getSpriteURL = (api_id: number, shiny = false) => {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon${
-      shiny ? "/shiny" : ""
-    }/${api_id}.png`;
-  };
 
   /**
    * Function to handle advancing to the next page of results.
