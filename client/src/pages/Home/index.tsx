@@ -8,13 +8,11 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router";
 import { useAppSelector } from "../../hooks/useTypedRedux";
-import { FaRegUser } from "react-icons/fa6";
 import { Encounter } from "../../types/encounter.types";
 import { useEffect, useState } from "react";
 import { fetchEncounters } from "../../services/encounterService";
 import EncounterLog from "./EncounterLog";
 import { getUsersEncounters } from "../../services/userService";
-import { UserRole } from "../../types/user.types";
 
 /**
  * PokéProject Home page component advertising web application features to anonymous Users,
@@ -60,7 +58,7 @@ export default function Home() {
 
   return (
     <Container id="pp-poke-project">
-      <h1 className="float-start">PokéProject</h1>
+      {/* <h1 className="float-start">PokéProject</h1>
       {currentUser ? (
         <Link to="/Profile">
           <Button className="btn-primary float-end m-2">
@@ -71,17 +69,17 @@ export default function Home() {
         <Link to="/Login">
           <Button className="btn-primary float-end m-2">Login</Button>
         </Link>
-      )}
-      {currentUser?.role === UserRole.Admin && (
+      )} */}
+      {/* {currentUser?.role === UserRole.Admin && (
         <Link to="/ManageEncounters">
           <Button className="btn-warning m-2 float-end">
             Manage Encounters
           </Button>
         </Link>
-      )}
-      <br />
-      <br />
-      <hr />
+      )} */}
+      {/* <br />
+      <br /> */}
+      {/* <hr /> */}
       <Alert variant="info">
         Disclaimer: This is a non-commercial, fan-made educational project
         created solely for the purpose of learning web development. It is not

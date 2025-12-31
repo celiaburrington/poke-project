@@ -21,8 +21,8 @@ export default function ExplorePage({
 
   return (
     <Container id="pp-explore">
-      <h3>Explore the World of Pokémon!</h3>
-      <hr />
+      {/* <h3>Explore the World of Pokémon!</h3> */}
+      {/* <hr /> */}
       <Button
         className="btn-danger me-2 float-end"
         onClick={() => {

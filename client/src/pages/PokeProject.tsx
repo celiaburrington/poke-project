@@ -14,6 +14,7 @@ import PublicProfile from "./Account/PublicProfile";
 import Details from "./Details";
 import { UserRole } from "../types/user.types";
 import ManageEncounters from "./Explore/ManageEncounters";
+import Sidebar from "./Sidebar";
 
 const AdminRoute = ({
   children,
@@ -59,32 +60,42 @@ function PokeProject() {
     <Provider store={store}>
       <div className="mb-3"></div>
       <Session>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Navigate to="Home" />} />
-          <Route path="/Home" element={<Home />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Signup" element={<Signup />} />
-          <Route path="/Profile/:uid" element={<PublicProfile />} />
-          <Route path="/Search" element={<Search />} />
-          <Route path="/Details/:pid" element={<Details />} />
+        <>
+          <Sidebar />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Navigate to="Home" />} />
+            <Route path="/Home" element={<Home />} />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/Signup" element={<Signup />} />
+            <Route path="/Profile/:uid" element={<PublicProfile />} />
+            <Route path="/Search" element={<Search />} />
+            <Route path="/Details/:pid" element={<Details />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/Profile"
-            element={<ProtectedRoute redirect="Home" children={<Profile />} />}
-          />
-          <Route
-            path="/ManageEncounters"
-            element={
-              <AdminRoute redirect="Explore" children={<ManageEncounters />} />
-            }
-          />
-          <Route
-            path="/Explore/*"
-            element={<ProtectedRoute redirect="Login" children={<Explore />} />}
-          />
-        </Routes>
+            {/* Protected Routes */}
+            <Route
+              path="/Profile"
+              element={
+                <ProtectedRoute redirect="Home" children={<Profile />} />
+              }
+            />
+            <Route
+              path="/ManageEncounters"
+              element={
+                <AdminRoute
+                  redirect="Explore"
+                  children={<ManageEncounters />}
+                />
+              }
+            />
+            <Route
+              path="/Explore/*"
+              element={
+                <ProtectedRoute redirect="Login" children={<Explore />} />
+              }
+            />
+          </Routes>
+        </>
       </Session>
       <div className="mt-3"></div>
     </Provider>

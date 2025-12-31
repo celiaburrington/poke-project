@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Encounter } from "../../types/encounter.types";
 import {
   getRecentPokemonEncounters,
@@ -16,12 +16,13 @@ import {
   getUsersFavorites,
 } from "../../services/favoriteService";
 import { Favorite } from "../../types/favorite.types";
+import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 
 export default function Details() {
   const { pid } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const fromPage: string = location.state?.from?.pathname ?? "/Home";
+  // const location = useLocation();
+  // const fromPage: string = location.state?.from?.pathname ?? "/Home";
   const { currentUser } = useAppSelector((state) => state.accountReducer);
   const [isFav, setIsFav] = useState<boolean>(false);
 
@@ -33,24 +34,24 @@ export default function Details() {
    * Get's the appropriate back button based on where the user is navigating from.
    * @returns Bootstrap Button navigating back
    */
-  const getBackButton = () => {
-    if (fromPage.includes("Explore")) {
-      return (
-        <Button
-          className="btn-danger float-end"
-          onClick={() => navigate("/Explore")}
-        >
-          Continue Exploring
-        </Button>
-      );
-    } else {
-      return (
-        <Button className="btn-danger float-end" onClick={() => navigate(-1)}>
-          {fromPage.includes("Search") ? "Back to Search" : "Back"}
-        </Button>
-      );
-    }
-  };
+  // const getBackButton = () => {
+  //   if (fromPage.includes("Explore")) {
+  //     return (
+  //       <Button
+  //         className="btn-danger float-end"
+  //         onClick={() => navigate("/Explore")}
+  //       >
+  //         Continue Exploring
+  //       </Button>
+  //     );
+  //   } else {
+  //     return (
+  //       <Button className="btn-danger float-end" onClick={() => navigate(-1)}>
+  //         {fromPage.includes("Search") ? "Back to Search" : "Back"}
+  //       </Button>
+  //     );
+  //   }
+  // };
 
   /**
    * Function to handle toggling the current pokemon as one of user's favorites
@@ -164,12 +165,17 @@ export default function Details() {
 
   return (
     <Container className="pp-details-page">
-      {getBackButton()}
+      {/* {getBackButton()} */}
       <Button
-        className={`btn-${isFav ? "warning" : "primary"} float-end me-2`}
+        variant={`${isFav ? "primary" : "outline-primary"}`}
+        className="me-2 float-start"
         onClick={handleFavoritesToggle}
       >
-        {isFav ? "Remove from Favorites" : "Add to Favorites"}
+        {isFav ? (
+          <IoIosStar className="mb-1 fs-5" />
+        ) : (
+          <IoIosStarOutline className="mb-1 fs-5" />
+        )}
       </Button>
       <h1>{details?.formatedName}</h1>
       <hr />
