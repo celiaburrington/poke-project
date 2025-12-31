@@ -1,6 +1,7 @@
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { Pokemon } from "../../../types/pokemon.types";
 import { FaTrashCan } from "react-icons/fa6";
+import getSpriteURL from "../../../utils";
 
 export default function AdminEncounterList({
   pokemon,
@@ -9,11 +10,6 @@ export default function AdminEncounterList({
   pokemon: Pokemon[];
   handleDelete: (p: Pokemon) => void;
 }) {
-  const getSpriteURL = (api_id: number, shiny = false) => {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon${
-      shiny ? "/shiny" : ""
-    }/${api_id}.png`;
-  };
   return (
     <>
       <Row xs={1} md={5} className="g-3">
