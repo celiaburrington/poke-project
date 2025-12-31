@@ -9,3 +9,8 @@ dd {
 dl {
   margin-bottom: 0;
 }
+
+.pp-get-encounter {
+  margin: 0;
+  padding: 0;
+}
